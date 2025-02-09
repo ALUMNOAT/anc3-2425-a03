@@ -5,7 +5,7 @@ import org.w3c.dom.ls.LSOutput;
 public class Client {
     public static void main(String[] args) {
         // Input expression
-        String expression = "2 + 10 / 2 + 3";
+        String expression = "= 2 + 10 / 5";
 
         // Create interpreter
         Context context = new Context(expression);
