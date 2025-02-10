@@ -1,6 +1,7 @@
 package excel.view;
 
 import excel.viewmodel.SpreadsheetViewModel;
+import javafx.beans.binding.Bindings;
 import javafx.geometry.Insets;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
@@ -16,13 +17,19 @@ public class HeaderView  extends HBox {
 
         this.setPadding(new Insets(10));
 
+
+
     }
 
     private void manageComponents() {
-        TextField Operationfield = new TextField("");
+        TextField OperationField = new TextField("");
 
-        this.getChildren().add(Operationfield);
-        HBox.setHgrow(Operationfield, Priority.ALWAYS);
+        this.getChildren().add(OperationField);
+        HBox.setHgrow(OperationField, Priority.ALWAYS);
+
+
+
+
 
     }
 }

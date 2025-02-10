@@ -2,8 +2,10 @@ package excel.view;
 
 import excel.viewmodel.SpreadsheetViewModel;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
+import javafx.scene.control.TablePosition;
 import org.controlsfx.control.spreadsheet.GridBase;
 import org.controlsfx.control.spreadsheet.SpreadsheetCell;
 import org.controlsfx.control.spreadsheet.SpreadsheetCellType;
@@ -25,7 +27,17 @@ public class MySpreadsheetView extends SpreadsheetView {
 
         layoutSpreadSheet();
 
+        // ACTION QUAND CELLULE SELECTIONNE
+//        this.getSelectionModel().getSelectedCells().addListener((ListChangeListener.Change<? extends TablePosition> change) -> {
+//            if (!change.getList().isEmpty()) {
+//                TablePosition cell = change.getList().get(0);
+//                viewModel.setSelectedCellValue();
+//            }
+//        });
+
+
     }
+
 
     private void layoutSpreadSheet() {
         for (int column = 0; column < grid.getColumnCount(); column++) {
@@ -48,6 +60,7 @@ public class MySpreadsheetView extends SpreadsheetView {
                 cell.itemProperty().addListener((observableValue, oldVal, newVal) -> {
                     if(!Objects.equals(oldVal, newVal)) {
                         viewModel.setCellValue(finalRow, finalColumn, (String) newVal);
+
 // A SUPPRIMER LE DEBUG PAR LA SUITE
                         System.out.println("DEBUG : change view " + newVal);
                         // viewModel.addAction("DEBUG : change view " + newVal); // TODO : remove
