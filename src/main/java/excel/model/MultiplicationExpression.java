@@ -1,6 +1,6 @@
 package excel.model;
 
-public class MultiplicationExpression extends Operator implements Expression {
+public class MultiplicationExpression extends Operator {
 
         MultiplicationExpression(Expression left, Expression right) {
             super(left, right);

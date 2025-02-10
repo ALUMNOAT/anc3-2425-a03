@@ -1,6 +1,6 @@
 package excel.model;
 
-public class Operator {
+public abstract class Operator implements Expression {
     Expression left;
     Expression right;
 
@@ -8,4 +8,7 @@ public class Operator {
         this.left = left;
         this.right = right;
     }
+
+    @Override
+    public abstract int interpret(Context context);
 }

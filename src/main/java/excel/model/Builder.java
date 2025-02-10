@@ -2,10 +2,10 @@ package excel.model;
 
 import java.util.Stack;
 
-public class Interpreter {
+public class Builder {
     private Context context;
 
-    public Interpreter(Context context) {
+    public Builder(Context context) {
         this.context = context;
     }
 
