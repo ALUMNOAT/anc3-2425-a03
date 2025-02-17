@@ -3,9 +3,9 @@ package excel.model;
 import java.util.Stack;
 
 public class Builder {
-    private Context context;
+    private String context;
 
-    public Builder(Context context) {
+    public Builder(String context) {
         this.context = context;
     }
 

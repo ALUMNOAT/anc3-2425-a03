@@ -7,7 +7,7 @@ public class DivisionExpression extends Operator {
     }
 
     @Override
-    public int interpret(Context context) {
+    public int interpret(String context) {
         return left.interpret(context) / right.interpret(context);
     }
 

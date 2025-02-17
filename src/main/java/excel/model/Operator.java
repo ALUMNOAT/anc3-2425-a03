@@ -10,5 +10,5 @@ public abstract class Operator implements Expression {
     }
 
     @Override
-    public abstract int interpret(Context context);
+    public abstract int interpret(String context);
 }

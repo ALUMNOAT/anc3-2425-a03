@@ -9,7 +9,7 @@ public class NumberExpression implements Expression {
     }
 
     @Override
-    public int interpret(Context context) {
+    public int interpret(String context) {
         return number;
     }
 }

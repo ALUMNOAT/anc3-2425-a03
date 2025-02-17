@@ -6,8 +6,7 @@ public class Client {
         String expression = "= 2 + 10 * 4";
 
         // Create interpreter
-        Context context = new Context(expression);
-        Builder builder = new Builder(context);
+        Builder builder = new Builder(expression);
 
         // Interpret the expression
         int result = builder.interpret(expression);
