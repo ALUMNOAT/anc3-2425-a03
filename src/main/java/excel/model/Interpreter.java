@@ -17,34 +17,42 @@ public class Interpreter {
     }
 
     private Expression buildExpressionTree(String expression) {
-        // Utiliser un StringBuilder pour analyser l'expression
         StringBuilder sb = new StringBuilder();
         Stack<Expression> stack = new Stack<>();
-        Stack<Character> operators = new Stack<>();
+        Stack<String> operators = new Stack<>();
 
         if (expression.startsWith("=")) {
             expression = expression.substring(1);
-            for (char ch : expression.toCharArray()) {
-                if (Character.isDigit(ch)) {
-                    sb.append(ch);
-                } else if (ch == '+' || ch == '-' || ch == '*' || ch == '/') {
-                    if (sb.length() > 0) {
-                        stack.push(new NumberExpression(Integer.parseInt(sb.toString())));
-                        sb.setLength(0);
+            int i = 0;
+            while (i < expression.length()) {
+                char ch = expression.charAt(i);
+
+                // Check for multi-character operators (>=, <=, ==, !=)
+                if (i + 1 < expression.length()) {
+                    String twoCharOp = expression.substring(i, i + 2);
+                    if (isOperator(twoCharOp)) {
+                        processOperator(sb, stack, operators, twoCharOp);
+                        i += 2; // Move by 2 characters
+                        continue;
                     }
-                    while (!operators.isEmpty() && precedence(operators.peek()) >= precedence(ch)) {
-                        stack.push(createExpression(operators.pop(), stack.pop(), stack.pop()));
-                    }
-                    operators.push(ch);
                 }
+
+                // Check for single-character operators (+, -, *, /, >, <)
+                if (isOperator(String.valueOf(ch))) {
+                    processOperator(sb, stack, operators, String.valueOf(ch));
+                } else {
+                    sb.append(ch); // Collect number characters
+                }
+                i++;
             }
         }
 
-
+        // Push last number to stack
         if (sb.length() > 0) {
             stack.push(new NumberExpression(Integer.parseInt(sb.toString())));
         }
 
+        // Process remaining operators
         while (!operators.isEmpty()) {
             stack.push(createExpression(operators.pop(), stack.pop(), stack.pop()));
         }
@@ -52,31 +60,45 @@ public class Interpreter {
         return stack.pop();
     }
 
-    private int precedence(char operator) {
-        switch (operator) {
-            case '+':
-            case '-':
-                return 1;
-            case '*':
-            case '/':
-                return 2;
-            default:
-                return -1;
+    private void processOperator(StringBuilder sb, Stack<Expression> stack, Stack<String> operators, String operator) {
+        if (sb.length() > 0) {
+            stack.push(new NumberExpression(Integer.parseInt(sb.toString())));
+            sb.setLength(0);
         }
+        while (!operators.isEmpty() && precedence(operators.peek()) >= precedence(operator)) {
+            stack.push(createExpression(operators.pop(), stack.pop(), stack.pop()));
+        }
+        operators.push(operator);
     }
 
-    private Expression createExpression(char operator, Expression right, Expression left) {
-        switch (operator) {
-            case '+':
-                return new AdditionExpression(left, right);
-            case '-':
-                return new SubstractionExpression(left, right);
-            case '*':
-                return new MultiplicationExpression(left, right);
-            case '/':
-                return new DivisionExpression(left, right);
-            default:
-                throw new IllegalArgumentException("Opérateur inconnu: " + operator);
-        }
+    private boolean isOperator(String op) {
+        return op.equals(">") || op.equals("<") || op.equals(">=") || op.equals("<=") ||
+                op.equals("==") || op.equals("!=") || op.equals("+") || op.equals("-") ||
+                op.equals("*") || op.equals("/");
+    }
+
+    private int precedence(String operator) {
+        return switch (operator) {
+            case ">", "<", ">=", "<=", "==", "!=" -> 1;
+            case "+", "-" -> 2;
+            case "*", "/" -> 3;
+            default -> -1;
+        };
+    }
+
+    private Expression createExpression(String operator, Expression right, Expression left) {
+        return switch (operator) {
+            case ">" -> new GreaterThanExpression(left, right);
+            case "<" -> new LessThanExpression(left, right);
+            case ">=" -> new GreaterThanOrEqualExpression(left, right);
+            case "<=" -> new LessThanOrEqualExpression(left, right);
+            case "==" -> new EqualExpression(left, right);
+            case "!=" -> new NotEqualExpression(left, right);
+            case "+" -> new AdditionExpression(left, right);
+            case "-" -> new SubstractionExpression(left, right);
+            case "*" -> new MultiplicationExpression(left, right);
+            case "/" -> new DivisionExpression(left, right);
+            default -> throw new IllegalArgumentException("Operateur inconnu: " + operator);
+        };
     }
 }
