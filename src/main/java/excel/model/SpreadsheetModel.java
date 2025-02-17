@@ -23,7 +23,7 @@ public class SpreadsheetModel {
         for (int i = 0 ; i< rows; i++){
             final ObservableList<SpreadsheetCellModel> list = FXCollections.observableArrayList();
             for (int j = 0 ; j < cols; j++){
-                SpreadsheetCellModel cell = new SpreadsheetCellModel("",i,j);
+                SpreadsheetCellModel cell = new SpreadsheetCellModel("","",i,j);
                 list.add(cell);
             }
             data.add(list);
