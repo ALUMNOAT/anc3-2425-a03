@@ -8,18 +8,17 @@ import javafx.collections.ObservableList;
 
 public class SpreadsheetViewModel {
     private final SpreadsheetModel model;
-    private final ObjectProperty<SpreadsheetCellViewModel> selectedCell = new SimpleObjectProperty<>();
 
     public SpreadsheetViewModel(SpreadsheetModel model) {
         this.model = model;
     }
 
     private SpreadsheetCellViewModel getCellViewModel(int line, int column) {
-        return new SpreadsheetCellViewModel(model.getCell(line, column));
+        return model.getCellViewModel(line, column);
     }
 
     public ReadOnlyObjectProperty<String> getCellValueProperty(int line, int column) {
-        return getCellViewModel(line, column).getCellValueProperty();
+        return model.getCellValueProperty(line, column);
     }
 
     public int getRowCount() {
@@ -31,14 +30,14 @@ public class SpreadsheetViewModel {
     }
 
     public void setCellValue(int line, int column, String value) {
-        getCellViewModel(line, column).setCellValue(value);
+        model.setCellValue(line, column, value);
     }
 
     public ObjectProperty<SpreadsheetCellViewModel> selectedCellProperty() { //cellule selectionnée
-        return selectedCell;
+        return model.selectedCellProperty();
     }
 
     public void setSelectedCell(int row, int column) {  // change la cellule selectionnée
-        this.selectedCell.set(getCellViewModel(row, column));
+        model.setSelectedCell(row, column);
     }
 }
