@@ -3,7 +3,7 @@ package excel.model;
 public class Client {
     public static void main(String[] args) {
         // Input expression
-        String expression = "=not1+2==4";
+        String expression = "=1>8 and 1<8";
 
         // Create interpreter
         Context context = new Context(expression);
