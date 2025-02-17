@@ -27,7 +27,17 @@ public class Interpreter {
             while (i < expression.length()) {
                 char ch = expression.charAt(i);
 
-                // Check for multi-character operators (>=, <=, ==, !=)
+                //check for 3 characters operators (and, not)
+                if (i + 2 < expression.length()) {
+                    String threeCharOp = expression.substring(i, i + 3);
+                    if(isOperator(threeCharOp)) {
+                        processOperator(sb, stack, operators, threeCharOp);
+                        i += 3; //Move by 3 characters
+                        continue;
+                    }
+                }
+
+                // Check for 2 characters operators (>=, <=, ==, !=, or)
                 if (i + 1 < expression.length()) {
                     String twoCharOp = expression.substring(i, i + 2);
                     if (isOperator(twoCharOp)) {
@@ -40,7 +50,7 @@ public class Interpreter {
                 // Check for single-character operators (+, -, *, /, >, <)
                 if (isOperator(String.valueOf(ch))) {
                     processOperator(sb, stack, operators, String.valueOf(ch));
-                } else {
+                } else if (Character.isDigit(ch) || ch == '-') { // Autoriser les chiffres et signe négatif
                     sb.append(ch); // Collect number characters
                 }
                 i++;
@@ -49,7 +59,8 @@ public class Interpreter {
 
         // Push last number to stack
         if (sb.length() > 0) {
-            stack.push(new NumberExpression(Integer.parseInt(sb.toString())));
+            String numberStr = sb.toString().trim(); // Remove spaces
+            stack.push(new NumberExpression(Integer.parseInt(numberStr)));
         }
 
         // Process remaining operators
@@ -74,20 +85,26 @@ public class Interpreter {
     private boolean isOperator(String op) {
         return op.equals(">") || op.equals("<") || op.equals(">=") || op.equals("<=") ||
                 op.equals("==") || op.equals("!=") || op.equals("+") || op.equals("-") ||
-                op.equals("*") || op.equals("/");
+                op.equals("*") || op.equals("/") || op.equals("not") || op.equals("and") || op.equals("or");
     }
 
     private int precedence(String operator) {
         return switch (operator) {
-            case ">", "<", ">=", "<=", "==", "!=" -> 1;
-            case "+", "-" -> 2;
-            case "*", "/" -> 3;
+            case "*", "/" -> 6;
+            case "+", "-" -> 5;
+            case ">", "<", ">=", "<=", "==", "!=" -> 4;
+            case "not" -> 3;
+            case "and" -> 2;
+            case "or" -> 1;
             default -> -1;
         };
     }
 
     private Expression createExpression(String operator, Expression right, Expression left) {
         return switch (operator) {
+            case "or" -> new OrExpression(left, right);
+            case "and" -> new AndExpression(left, right);
+            case "not" -> new NotExpression(left);
             case ">" -> new GreaterThanExpression(left, right);
             case "<" -> new LessThanExpression(left, right);
             case ">=" -> new GreaterThanOrEqualExpression(left, right);

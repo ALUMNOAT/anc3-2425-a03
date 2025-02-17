@@ -1,17 +1,15 @@
 package excel.model;
 
 public class EqualExpression extends Operator implements Expression {
-
-    EqualExpression(Expression left, Expression right) {
+    public EqualExpression(Expression left, Expression right) {
         super(left, right);
     }
 
     @Override
     public int interpret(Context context) {
-        if (left.interpret(context) == right.interpret(context)) {
-            return 1;
-        } else {
-            return 0;
-        }
+        int leftValue = left.interpret(context);
+        int rightValue = right.interpret(context);
+        System.out.println("Comparing: " + leftValue + " == " + rightValue);
+        return leftValue == rightValue ? 1 : 0;
     }
 }

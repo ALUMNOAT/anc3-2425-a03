@@ -3,7 +3,7 @@ package excel.model;
 public class Client {
     public static void main(String[] args) {
         // Input expression
-        String expression = "=1+0!=2";
+        String expression = "=not1+2==4";
 
         // Create interpreter
         Context context = new Context(expression);

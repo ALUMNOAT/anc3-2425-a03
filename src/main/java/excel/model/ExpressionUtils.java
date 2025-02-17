@@ -6,7 +6,9 @@ public class ExpressionUtils {
     public static boolean isBooleanExpression(String expression) {
         return expression.contains(">") || expression.contains("<") ||
                 expression.contains(">=") || expression.contains("<=") ||
-                expression.contains("==") || expression.contains("!=");
+                expression.contains("==") || expression.contains("!=") ||
+                expression.contains("not") || expression.contains("and") ||
+                expression.contains("or");
     }
 
     // Function to format the result correctly
