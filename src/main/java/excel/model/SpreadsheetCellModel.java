@@ -6,7 +6,7 @@ import javafx.beans.property.SimpleObjectProperty;
 public class SpreadsheetCellModel {
     private final SimpleObjectProperty<String> valueProperty = new SimpleObjectProperty<>();
     private final int row;
-    private  final int col;
+    private final int col;
 
     public SpreadsheetCellModel(String value, int row, int col){
         this.valueProperty.set(value);
@@ -16,7 +16,7 @@ public class SpreadsheetCellModel {
 
     public ReadOnlyObjectProperty<String> valueProperty(){ return this.valueProperty;}
 
-    public void set(String value) {
-        this.valueProperty.set(value);
-    }
+    public void setValue(String value) {this.valueProperty.set(value);}
+
+    public void set(String value) {this.valueProperty.set(value);}
 }

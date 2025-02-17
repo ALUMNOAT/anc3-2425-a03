@@ -5,6 +5,7 @@ import javafx.beans.property.*;
 
 public class SpreadsheetViewModel {
     private final SpreadsheetModel model;
+    private final SimpleBooleanProperty editableProperty = new SimpleBooleanProperty(true);
 
     public SpreadsheetViewModel(SpreadsheetModel model) {
         this.model = model;
@@ -36,5 +37,13 @@ public class SpreadsheetViewModel {
 
     public void setSelectedCell(int row, int column) {  // change la cellule selectionnée
         model.setSelectedCell(row, column);
+    }
+
+    public ReadOnlyBooleanProperty editableProperty() {
+        return this.editableProperty;
+    }
+
+    public void toggleEditable() {
+        this.editableProperty.set(this.editableProperty.not().get());
     }
 }
