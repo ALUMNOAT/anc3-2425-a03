@@ -2,13 +2,9 @@ package excel.viewmodel;
 
 import excel.model.SpreadsheetModel;
 import javafx.beans.property.*;
-import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
-import javafx.collections.ObservableList;
 
 public class SpreadsheetViewModel {
     private final SpreadsheetModel model;
-
 
     public SpreadsheetViewModel(SpreadsheetModel model) {
         this.model = model;
