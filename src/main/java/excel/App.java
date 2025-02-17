@@ -25,9 +25,16 @@ public class App extends Application {
 
         FXComponentInspectorHandler.handleAll();
 
+        Scene scene = new Scene(root, 652, 332);
+        primaryStage.setTitle("Excel");
+        primaryStage.setScene(scene);
+        primaryStage.show();
+    }
 
-
-
+    public static void main(String[] args) {
+        launch(args);
+    }
+}
 
 
 
@@ -53,14 +60,3 @@ public class App extends Application {
 //        SpreadsheetView spreadsheetView = new SpreadsheetView(grid);
 //        // INFO : un SpreadsheetView a un selectionModel qui permet de gérer les cellules sélectionnées
 //        // INFO : un SpreadsheetView a un editingCellProperty qui permet de récupérer la cellule en cours d'édition
-
-        Scene scene = new Scene(root, 652, 332);
-        primaryStage.setTitle("Spreadsheet");
-        primaryStage.setScene(scene);
-        primaryStage.show();
-    }
-
-    public static void main(String[] args) {
-        launch(args);
-    }
-}

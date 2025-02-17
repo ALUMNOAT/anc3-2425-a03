@@ -2,8 +2,10 @@ package excel.view;
 
 import excel.viewmodel.SpreadsheetViewModel;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
+import javafx.scene.control.TablePosition;
 import org.controlsfx.control.spreadsheet.GridBase;
 import org.controlsfx.control.spreadsheet.SpreadsheetCell;
 import org.controlsfx.control.spreadsheet.SpreadsheetCellType;
@@ -16,14 +18,23 @@ public class MySpreadsheetView extends SpreadsheetView {
     private final SpreadsheetViewModel viewModel;
     private final GridBase grid;
 
-    public MySpreadsheetView(SpreadsheetViewModel viewModel){
+    public MySpreadsheetView(SpreadsheetViewModel viewModel) {
         this.viewModel = viewModel;
-
         this.setPadding(new Insets(10));
         this.grid = createGridAndBindings();
         this.setGrid(this.grid);
-
         layoutSpreadSheet();
+
+        // Gestion de la sélection de cellule
+        this.getSelectionModel().getSelectedCells().addListener((ListChangeListener<? super TablePosition>) change -> { // ajout d'un écouteur obsverant si il y a un changement de cellule selectionnée
+            while (change.next()) {
+                if (!this.getSelectionModel().getSelectedCells().isEmpty()) { //vérifie si il y a bien une cellule sélectionné
+                    TablePosition<?, ?> cell = change.getAddedSubList().get(0);  // On récupère la cellule sélectionnée
+                    viewModel.setSelectedCell(cell.getRow(), cell.getColumn());
+                }
+            }
+        });
+
 
     }
 
@@ -35,7 +46,6 @@ public class MySpreadsheetView extends SpreadsheetView {
 
     private GridBase createGridAndBindings() {
         GridBase grid = new GridBase(viewModel.getRowCount(), viewModel.getColumnCount());
-
         ObservableList<ObservableList<SpreadsheetCell>> rows = FXCollections.observableArrayList();
 
         for (int row = 0; row < grid.getRowCount(); ++row) {
@@ -45,22 +55,24 @@ public class MySpreadsheetView extends SpreadsheetView {
 
                 int finalRow = row;
                 int finalColumn = column;
+
+                // Synchronisation entre le modèle et la vue
                 cell.itemProperty().addListener((observableValue, oldVal, newVal) -> {
-                    if(!Objects.equals(oldVal, newVal)) {
+                    if (!Objects.equals(oldVal, newVal)) { // si la valeur a changé
                         viewModel.setCellValue(finalRow, finalColumn, (String) newVal);
-// A SUPPRIMER LE DEBUG PAR LA SUITE
-                        System.out.println("DEBUG : change view " + newVal);
-                        // viewModel.addAction("DEBUG : change view " + newVal); // TODO : remove
                     }
+                    // A SUPPRIMER LE DEBUG PAR LA SUITE
+                    System.out.println("DEBUG : change view " + newVal);
+                    // viewModel.addAction("DEBUG : change view " + newVal); // TODO : remove
                 });
 
                 viewModel.getCellValueProperty(finalRow, finalColumn).addListener((observableValue, oldVal, newVal) -> {
-                    if(!Objects.equals(oldVal, newVal)) {
+                    if (!Objects.equals(oldVal, newVal)) { // si la valeur a changé
                         cell.itemProperty().set(newVal);
-// A SUPPRIMER LE DEBUG PAR LA SUITE
-                        System.out.println("DEBUG : change model " + newVal);
-                        // viewModel.addAction("DEBUG : change model " + newVal); // TODO : remove
                     }
+                    // A SUPPRIMER LE DEBUG PAR LA SUITE
+                    System.out.println("DEBUG : change model " + newVal);
+                    // viewModel.addAction("DEBUG : change model " + newVal); // TODO : remove
                 });
 
                 list.add(cell);
