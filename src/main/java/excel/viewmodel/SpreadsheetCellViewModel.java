@@ -14,7 +14,17 @@ public class SpreadsheetCellViewModel {
         return model.valueProperty();
     }
 
-    public void setCellValue(String value) {
-        model.set(value);
+    public ReadOnlyObjectProperty<String> getCellResultProperty() {
+        return model.resultProperty();
     }
+
+    public void setCellValue(String value) {
+        model.setValue(value);
+    }
+
+    public void setCellResult(String value) {
+        model.setResult(value);
+    }
+
+
 }
