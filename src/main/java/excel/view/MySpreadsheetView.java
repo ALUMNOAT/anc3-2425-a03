@@ -1,5 +1,7 @@
 package excel.view;
 
+import excel.model.Context;
+import excel.model.Interpreter;
 import excel.viewmodel.SpreadsheetViewModel;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -23,17 +25,30 @@ public class MySpreadsheetView extends SpreadsheetView {
         this.setPadding(new Insets(10));
         this.grid = createGridAndBindings();
         this.setGrid(this.grid);
+
+
+
+        this.editingCellProperty().addListener((observableValue, oldVal, newVal) -> {
+            if(newVal != null) {
+                System.out.println("edit cell");
+                viewModel.toggleEditable();
+            }
+        });
+
         layoutSpreadSheet();
 
         // Gestion de la sélection de cellule
         this.getSelectionModel().getSelectedCells().addListener((ListChangeListener<? super TablePosition>) change -> { // ajout d'un écouteur obsverant si il y a un changement de cellule selectionnée
             while (change.next()) {
+                viewModel.toggleEditable();
                 if (!this.getSelectionModel().getSelectedCells().isEmpty()) { //vérifie si il y a bien une cellule sélectionné
                     TablePosition<?, ?> cell = change.getAddedSubList().get(0);  // On récupère la cellule sélectionnée
                     viewModel.setSelectedCell(cell.getRow(), cell.getColumn());
                 }
             }
         });
+
+
 
 
     }
@@ -58,7 +73,25 @@ public class MySpreadsheetView extends SpreadsheetView {
 
                 // Synchronisation entre le modèle et la vue
                 cell.itemProperty().addListener((observableValue, oldVal, newVal) -> {
+// DOIT ETRE MODIFIE POUR ETRE MIS DANS MODEL ET VIEWMODEL ET CHANGER LE CALCUL PAR UNE FONCTION AU LIEU DE TOUT CELA
                     if (!Objects.equals(oldVal, newVal)) { // si la valeur a changé
+
+                            if (editableProperty().get()){
+                                Context context = new Context((String) newVal);
+                                Interpreter interpreter = new Interpreter(context);
+
+                                // Interpret the expression
+                                if (newVal != null){
+                                    int result = interpreter.interpret((String) newVal);
+                                    String res = Integer.toString(result);
+                                    System.out.println("Result: " + result);
+                                    cell.itemProperty().set(res);
+                                }
+
+                            }// si la valeur a changé
+                            else {
+                                cell.itemProperty().set(newVal);}
+
                         viewModel.setCellValue(finalRow, finalColumn, (String) newVal);
                     }
                     // A SUPPRIMER LE DEBUG PAR LA SUITE
@@ -67,8 +100,23 @@ public class MySpreadsheetView extends SpreadsheetView {
                 });
 
                 viewModel.getCellValueProperty(finalRow, finalColumn).addListener((observableValue, oldVal, newVal) -> {
-                    if (!Objects.equals(oldVal, newVal)) { // si la valeur a changé
-                        cell.itemProperty().set(newVal);
+// DOIT ETRE MODIFIE POUR ETRE MIS DANS MODEL ET VIEWMODEL ET CHANGER LE CALCUL PAR UNE FONCTION AU LIEU DE TOUT CELA
+                    if (!Objects.equals(oldVal, newVal)) {
+                        if (editableProperty().get()){
+                            Context context = new Context(newVal);
+                            Interpreter interpreter = new Interpreter(context);
+
+                            // Interpret the expression
+                            if (newVal != null){
+                            int result = interpreter.interpret(newVal);
+                            String res = Integer.toString(result);
+                                System.out.println("Result: " + result);
+                                cell.itemProperty().set(res);
+                            }
+
+                        }// si la valeur a changé
+                        else {
+                        cell.itemProperty().set(newVal);}
                     }
                     // A SUPPRIMER LE DEBUG PAR LA SUITE
                     System.out.println("DEBUG : change model " + newVal);
