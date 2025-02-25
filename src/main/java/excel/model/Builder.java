@@ -38,8 +38,11 @@ public class Builder {
                     operators.push(ch);
                 }
             }
+        } else {
+            if (expression.isEmpty()) {
+                return new NumberExpression(0);
+            }
         }
-
 
         if (sb.length() > 0) {
             stack.push(new NumberExpression(Integer.parseInt(sb.toString())));
