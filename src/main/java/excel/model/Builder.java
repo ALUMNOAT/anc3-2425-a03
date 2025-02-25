@@ -22,21 +22,23 @@ public class Builder {
         Stack<Expression> stack = new Stack<>();
         Stack<Character> operators = new Stack<>();
 
-        if (expression.startsWith("=")) {
-            expression = expression.substring(1);
-            for (char ch : expression.toCharArray()) {
-                if (Character.isDigit(ch)) {
-                    sb.append(ch);
-                } else if (ch == '+' || ch == '-' || ch == '*' || ch == '/') {
-                    if (sb.length() > 0) {
-                        stack.push(new NumberExpression(Integer.parseInt(sb.toString())));
-                        sb.setLength(0);
-                    }
-                    while (!operators.isEmpty() && precedence(operators.peek()) >= precedence(ch)) {
-                        stack.push(createExpression(operators.pop(), stack.pop(), stack.pop()));
-                    }
-                    operators.push(ch);
+        if (!expression.startsWith("=")) {
+            return new NumberExpression(Integer.parseInt(expression));
+        }
+
+        expression = expression.substring(1);
+        for (char ch : expression.toCharArray()) {
+            if (Character.isDigit(ch)) {
+                sb.append(ch);
+            } else if (ch == '+' || ch == '-' || ch == '*' || ch == '/') {
+                if (sb.length() > 0) {
+                    stack.push(new NumberExpression(Integer.parseInt(sb.toString())));
+                    sb.setLength(0);
                 }
+                while (!operators.isEmpty() && precedence(operators.peek()) >= precedence(ch)) {
+                    stack.push(createExpression(operators.pop(), stack.pop(), stack.pop()));
+                }
+                operators.push(ch);
             }
         }
 
