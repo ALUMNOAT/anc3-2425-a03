@@ -1,7 +1,6 @@
 package excel.view;
 
-import excel.model.Context;
-import excel.model.Interpreter;
+import excel.model.Builder;
 import excel.viewmodel.SpreadsheetViewModel;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -25,8 +24,6 @@ public class MySpreadsheetView extends SpreadsheetView {
         this.setPadding(new Insets(10));
         this.grid = createGridAndBindings();
         this.setGrid(this.grid);
-
-
 
         this.editingCellProperty().addListener((observableValue, oldVal, newVal) -> {
             if(newVal != null) {
@@ -77,8 +74,8 @@ public class MySpreadsheetView extends SpreadsheetView {
                     if (!Objects.equals(oldVal, newVal)) { // si la valeur a changé
 
                             if (editableProperty().get()){
-                                Context context = new Context((String) newVal);
-                                Interpreter interpreter = new Interpreter(context);
+                                String context = (String) newVal;
+                                Builder interpreter = new Builder(context);
 
                                 // Interpret the expression
                                 if (newVal != null){
@@ -103,8 +100,8 @@ public class MySpreadsheetView extends SpreadsheetView {
 // DOIT ETRE MODIFIE POUR ETRE MIS DANS MODEL ET VIEWMODEL ET CHANGER LE CALCUL PAR UNE FONCTION AU LIEU DE TOUT CELA
                     if (!Objects.equals(oldVal, newVal)) {
                         if (editableProperty().get()){
-                            Context context = new Context(newVal);
-                            Interpreter interpreter = new Interpreter(context);
+                            String context = (String) newVal;
+                            Builder interpreter = new Builder(context);
 
                             // Interpret the expression
                             if (newVal != null){

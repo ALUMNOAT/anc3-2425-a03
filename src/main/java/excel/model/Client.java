@@ -1,18 +1,15 @@
 package excel.model;
 
-import org.w3c.dom.ls.LSOutput;
-
 public class Client {
     public static void main(String[] args) {
         // Input expression
-        String expression = "= 2 + 10 / 5";
+        String expression = "= 2 + 10 * 4";
 
         // Create interpreter
-        Context context = new Context(expression);
-        Interpreter interpreter = new Interpreter(context);
+        Builder builder = new Builder(expression);
 
         // Interpret the expression
-        int result = interpreter.interpret(expression);
+        int result = builder.interpret(expression);
         System.out.println("Result: " + result);
     }
 }
