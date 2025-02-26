@@ -21,6 +21,10 @@ public class SpreadsheetViewModel {
         return model.getCellValueProperty(line, column);
     }
 
+    public ReadOnlyObjectProperty<String> getCellResultProperty(int line, int column) {
+        return model.getCellResultProperty(line, column);
+    }
+
     public ReadOnlyBooleanProperty editableProperty() {
         return this.editableProperty;
     }
@@ -39,6 +43,9 @@ public class SpreadsheetViewModel {
 
     public void setCellValue(int line, int column, String value) {
         model.setCellValue(line, column, value);
+    }
+    public void setCellResult(int line, int column, String value) {
+        model.setCellResult(line, column, value);
     }
 
     public ObjectProperty<SpreadsheetCellViewModel> selectedCellProperty() { //cellule selectionnée

@@ -72,8 +72,8 @@ public class MySpreadsheetView extends SpreadsheetView {
                 cell.itemProperty().addListener((observableValue, oldVal, newVal) -> {
 // DOIT ETRE MODIFIE POUR ETRE MIS DANS MODEL ET VIEWMODEL ET CHANGER LE CALCUL PAR UNE FONCTION AU LIEU DE TOUT CELA
                     if (!Objects.equals(oldVal, newVal)) { // si la valeur a changé
+                        System.out.println("newVal  : " + newVal);
 
-                            if (editableProperty().get()){
                                 String context = (String) newVal;
                                 Builder interpreter = new Builder(context);
 
@@ -81,15 +81,16 @@ public class MySpreadsheetView extends SpreadsheetView {
                                 if (newVal != null){
                                     int result = interpreter.interpret((String) newVal);
                                     String res = Integer.toString(result);
-                                    System.out.println("Result: " + result);
+                                    System.out.println("Result1: " + res);
+                                    System.out.println("newVal 2 : " + newVal);
+                                    viewModel.setCellValue(finalRow, finalColumn, (String) newVal);
                                     cell.itemProperty().set(res);
                                 }
 
-                            }// si la valeur a changé
-                            else {
-                                cell.itemProperty().set(newVal);}
+                            // si la valeur a changé
 
-                        viewModel.setCellValue(finalRow, finalColumn, (String) newVal);
+                        System.out.println("newVal 1 : " + newVal);
+//                        viewModel.setCellValue(finalRow, finalColumn, (String) newVal);
                     }
                     // A SUPPRIMER LE DEBUG PAR LA SUITE
                     System.out.println("DEBUG : change view " + newVal);
@@ -99,7 +100,7 @@ public class MySpreadsheetView extends SpreadsheetView {
                 viewModel.getCellValueProperty(finalRow, finalColumn).addListener((observableValue, oldVal, newVal) -> {
 // DOIT ETRE MODIFIE POUR ETRE MIS DANS MODEL ET VIEWMODEL ET CHANGER LE CALCUL PAR UNE FONCTION AU LIEU DE TOUT CELA
                     if (!Objects.equals(oldVal, newVal)) {
-                        if (editableProperty().get()){
+
                             String context = (String) newVal;
                             Builder interpreter = new Builder(context);
 
@@ -107,13 +108,13 @@ public class MySpreadsheetView extends SpreadsheetView {
                             if (newVal != null){
                             int result = interpreter.interpret(newVal);
                             String res = Integer.toString(result);
-                                System.out.println("Result: " + result);
+                                System.out.println("Result2: " + result);
                                 cell.itemProperty().set(res);
                             }
 
-                        }// si la valeur a changé
-                        else {
-                        cell.itemProperty().set(newVal);}
+                        // si la valeur a changé
+
+
                     }
                     // A SUPPRIMER LE DEBUG PAR LA SUITE
                     System.out.println("DEBUG : change model " + newVal);
