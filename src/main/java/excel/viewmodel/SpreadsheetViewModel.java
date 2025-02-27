@@ -1,5 +1,6 @@
 package excel.viewmodel;
 
+import excel.model.SpreadsheetCellModel;
 import excel.model.SpreadsheetModel;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
@@ -14,19 +15,23 @@ public class SpreadsheetViewModel {
     }
 
     public SpreadsheetCellViewModel getCellViewModel(int line, int column) {
-        return model.getCellViewModel(line, column);
+        return new SpreadsheetCellViewModel(model.getCell(line,column));
     }
 
     public ReadOnlyObjectProperty<String> getCellValueProperty(int line, int column) {
-        return model.getCellValueProperty(line, column);
+        return getCellViewModel(line,column).getCellValueProperty();
     }
 
-    public ReadOnlyBooleanProperty editableProperty() {
-        return this.editableProperty;
+    public ReadOnlyObjectProperty<String> getCellResultProperty(int line, int column) {
+        return getCellViewModel(line,column).getCellResultProperty();
     }
 
-    public void toggleEditable() {
-        this.editableProperty.set(this.editableProperty.not().get());
+    public String getCellValue(int line, int column) {
+        return getCellViewModel(line,column).getCellValue();
+    }
+
+    public String getCellResult(int line, int column) {
+        return getCellViewModel(line,column).getCellResult();
     }
 
     public int getRowCount() {
@@ -38,14 +43,27 @@ public class SpreadsheetViewModel {
     }
 
     public void setCellValue(int line, int column, String value) {
-        model.setCellValue(line, column, value);
+        getCellViewModel(line,column).setCellValue(value);
     }
 
-    public ObjectProperty<SpreadsheetCellViewModel> selectedCellProperty() { //cellule selectionnée
+
+    public void setCellResult(int line, int column, String value){
+        getCellViewModel(line,column).setCellResult(value);
+    }
+
+    public ObjectProperty<SpreadsheetCellModel> selectedCellProperty() { //cellule selectionnée
         return model.selectedCellProperty();
     }
 
     public void setSelectedCell(int row, int column) {  // change la cellule selectionnée
         model.setSelectedCell(row, column);
+    }
+
+    public ReadOnlyBooleanProperty editableProperty() {
+        return this.editableProperty;
+    }
+
+    public void toggleEditable() {
+        this.editableProperty.set(this.editableProperty.not().get());
     }
 }

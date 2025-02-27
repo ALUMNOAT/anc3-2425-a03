@@ -9,11 +9,15 @@ public class Builder {
         this.context = context;
     }
 
-    public int interpret(String expression) {
+    public String interpret(String expression) {
         // Parse the expression and create the syntax tree
+        if (expression.isEmpty()){
+            return expression;
+        }
         Expression expressionTree = buildExpressionTree(expression);
         // Interpret the expression tree
-        return expressionTree.interpret(context);
+        int result = expressionTree.interpret(context);
+        return Integer.toString(result);
     }
 
     private Expression buildExpressionTree(String expression) {

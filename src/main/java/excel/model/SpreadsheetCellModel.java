@@ -32,7 +32,16 @@ public class SpreadsheetCellModel {
         this.valueProperty.set(value);
     }
 
+    //POTENTIELLEMENT AJOUTER LE CALCUL ICI ??
     public void setResult(String value){
-        this.resultProperty.set(value);
+        Builder interpreter = new Builder(value);
+        // Interpret the expression
+        if (value != null){
+            String res = interpreter.interpret(value);
+            this.resultProperty.set(res);
+        }
+        else
+            this.resultProperty.set("");
     }
+
 }

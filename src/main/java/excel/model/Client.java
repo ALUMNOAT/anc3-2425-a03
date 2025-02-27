@@ -9,7 +9,7 @@ public class Client {
         Builder builder = new Builder(expression);
 
         // Interpret the expression
-        int result = builder.interpret(expression);
+        String result = builder.interpret(expression);
         System.out.println("Result: " + result);
     }
 }

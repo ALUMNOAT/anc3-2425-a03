@@ -67,29 +67,35 @@ public class MySpreadsheetView extends SpreadsheetView {
 
                 int finalRow = row;
                 int finalColumn = column;
+                int turn = 0;
 
                 // Synchronisation entre le modèle et la vue
                 cell.itemProperty().addListener((observableValue, oldVal, newVal) -> {
 // DOIT ETRE MODIFIE POUR ETRE MIS DANS MODEL ET VIEWMODEL ET CHANGER LE CALCUL PAR UNE FONCTION AU LIEU DE TOUT CELA
                     if (!Objects.equals(oldVal, newVal)) { // si la valeur a changé
-
-                            if (editableProperty().get()){
-                                String context = (String) newVal;
-                                Builder interpreter = new Builder(context);
-
-                                // Interpret the expression
-                                if (newVal != null){
-                                    int result = interpreter.interpret((String) newVal);
-                                    String res = Integer.toString(result);
-                                    System.out.println("Result: " + result);
-                                    cell.itemProperty().set(res);
-                                }
-
-                            }// si la valeur a changé
-                            else {
-                                cell.itemProperty().set(newVal);}
-
+                        System.out.println("avant value !");
                         viewModel.setCellValue(finalRow, finalColumn, (String) newVal);
+                        System.out.println("après Value -> value : " + viewModel.getCellValue(finalRow,finalColumn)+ ", result : " + viewModel.getCellResult(finalRow,finalColumn));
+                        System.out.println("avant Result !");
+                        viewModel.setCellResult(finalRow,finalColumn, (String) newVal);
+                        System.out.println("après Result -> value : " + viewModel.getCellValue(finalRow,finalColumn)+ ", result : " + viewModel.getCellResult(finalRow,finalColumn));
+//                            if (editableProperty().get()){
+//                                String context = (String) newVal;
+//                                Builder interpreter = new Builder(context);
+//
+//                                // Interpret the expression
+//                                if (newVal != null){
+//                                    int result = interpreter.interpret((String) newVal);
+//                                    String res = Integer.toString(result);
+//                                    System.out.println("Result: " + result);
+//                                    cell.itemProperty().set(res);
+//                                }
+//
+//                            }// si la valeur a changé
+//                            else {
+//                                cell.itemProperty().set(newVal);}
+
+
                     }
                     // A SUPPRIMER LE DEBUG PAR LA SUITE
                     System.out.println("DEBUG : change view " + newVal);
@@ -99,21 +105,26 @@ public class MySpreadsheetView extends SpreadsheetView {
                 viewModel.getCellValueProperty(finalRow, finalColumn).addListener((observableValue, oldVal, newVal) -> {
 // DOIT ETRE MODIFIE POUR ETRE MIS DANS MODEL ET VIEWMODEL ET CHANGER LE CALCUL PAR UNE FONCTION AU LIEU DE TOUT CELA
                     if (!Objects.equals(oldVal, newVal)) {
-                        if (editableProperty().get()){
-                            String context = (String) newVal;
-                            Builder interpreter = new Builder(context);
-
-                            // Interpret the expression
-                            if (newVal != null){
-                            int result = interpreter.interpret(newVal);
-                            String res = Integer.toString(result);
-                                System.out.println("Result: " + result);
-                                cell.itemProperty().set(res);
-                            }
-
-                        }// si la valeur a changé
-                        else {
-                        cell.itemProperty().set(newVal);}
+                        System.out.println("ouh lala changment");
+                        cell.itemProperty().set(newVal);
+//
+//
+//
+//                        if (editableProperty().get()){
+//                            String context = (String) newVal;
+//                            Builder interpreter = new Builder(context);
+//
+//                            // Interpret the expression
+//                            if (newVal != null){
+//                            int result = interpreter.interpret(newVal);
+//                            String res = Integer.toString(result);
+//                                System.out.println("Result: " + result);
+//                                cell.itemProperty().set(res);
+//                            }
+//
+//                        }// si la valeur a changé
+//                        else {
+//                        cell.itemProperty().set(newVal);}
                     }
                     // A SUPPRIMER LE DEBUG PAR LA SUITE
                     System.out.println("DEBUG : change model " + newVal);

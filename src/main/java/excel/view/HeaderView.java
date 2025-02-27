@@ -37,7 +37,7 @@ public class HeaderView  extends HBox {
         // change le texte en changeant de cellule
         viewModel.selectedCellProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal != null) {
-                selectedCellValue.set(newVal.getCellValueProperty().get());
+                selectedCellValue.set(newVal.getValue());
             } else {
                 selectedCellValue.set("");
             }
@@ -46,7 +46,8 @@ public class HeaderView  extends HBox {
         // mis à jour de la cellule si changement de cellule selectionnée
         operationField.setOnAction(event -> {
             if (viewModel.selectedCellProperty().get() != null) {
-                viewModel.selectedCellProperty().get().setCellValue(selectedCellValue.get());
+                viewModel.selectedCellProperty().get().setValue(selectedCellValue.get());
+                viewModel.selectedCellProperty().get().setResult(selectedCellValue.get());
             }
         });
     }

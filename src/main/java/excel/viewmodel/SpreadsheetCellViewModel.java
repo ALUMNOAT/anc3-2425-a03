@@ -6,6 +6,8 @@ import javafx.beans.property.ReadOnlyObjectProperty;
 public class SpreadsheetCellViewModel {
     private final SpreadsheetCellModel model;
 
+    //OK
+
     public SpreadsheetCellViewModel(SpreadsheetCellModel model) {
         this.model = model;
     }
@@ -16,6 +18,14 @@ public class SpreadsheetCellViewModel {
 
     public ReadOnlyObjectProperty<String> getCellResultProperty() {
         return model.resultProperty();
+    }
+
+    public String getCellValue(){
+        return  model.getValue();
+    }
+
+    public String getCellResult(){
+        return  model.getResult();
     }
 
     public void setCellValue(String value) {
