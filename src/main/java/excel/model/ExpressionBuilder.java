@@ -1,81 +1,95 @@
 package excel.model;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class ExpressionBuilder {
     public Expression build(String strExpr) {
         if (strExpr.charAt(0) == '=') {
             List<String> tokens = tokenize(strExpr.substring(1));
-            System.out.println(tokens);
+            System.out.println("Tokens: " + tokens); // Affichage des tokens analysés
             return buildExpression(tokens);
         }
         return null;
     }
 
     private Expression buildExpression(List<String> tokens) {
-        // Chercher l'opérateur le plus à droite
-        int idxOp = findLastOperator(tokens);
+        Stack<Expression> values = new Stack<>();
+        Stack<String> operators = new Stack<>();
 
-        if (idxOp != -1) {
-            String op = tokens.get(idxOp);
-            // Séparer les tokens en deux parties
-            List<String> leftTokens = new ArrayList<>(tokens.subList(0, idxOp));
-            List<String> rightTokens = new ArrayList<>(tokens.subList(idxOp + 1, tokens.size()));
-
-            // Construire récursivement les sous-expressions
-            Expression left = buildExpression(leftTokens);
-            Expression right = buildExpression(rightTokens);
-
-            return makeOpExpression(op, left, right);
-        }
-
-        // Si plus d'opérateurs, c'est un nombre
-        if (tokens.size() == 1) {
-            return new NumberExpression(Double.parseDouble(tokens.get(0)));
-        }
-
-        return null;
-    }
-
-    private int findLastOperator(List<String> tokens) {
-        // On cherche de droite à gauche pour respecter l'associativité
-        for (int i = tokens.size() - 1; i >= 0; i--) {
-            String token = tokens.get(i);
-            if (isOp(token)) {
-                return i;
+        for (String token : tokens) {
+            if (isNumber(token)) {
+                values.push(new NumberExpression(Double.parseDouble(token)));
+            } else if (isOp(token)) {
+                while (!operators.isEmpty() && precedence(operators.peek()) >= precedence(token)) {
+                    Expression right = values.pop();
+                    Expression left = values.pop();
+                    values.push(makeOpExpression(operators.pop(), left, right));
+                }
+                operators.push(token);
             }
         }
-        return -1;
+
+        while (!operators.isEmpty()) {
+            Expression right = values.pop();
+            Expression left = values.pop();
+            values.push(makeOpExpression(operators.pop(), left, right));
+        }
+
+        return values.pop();
     }
 
-    public List<String> tokenize(String strExpr) {
+    private List<String> tokenize(String strExpr) {
         List<String> tokens = new ArrayList<>();
-        String number = "";
-        for (int i = 0; i < strExpr.length(); ++i) {
-            char c = strExpr.charAt(i);
-            if (Character.isDigit(c)) {
-                number += c;
-            } else if (isOp(c) && !number.isEmpty()) {
-                tokens.add(number);
-                number = "";
-                tokens.add(""+c);
+        StringBuilder number = new StringBuilder();
+
+        for (char c : strExpr.toCharArray()) {
+            if (Character.isDigit(c) || c == '.') {
+                number.append(c);
+            } else if (isOp(c)) {
+                if (number.length() > 0) {
+                    tokens.add(number.toString());
+                    number.setLength(0);
+                }
+                tokens.add(String.valueOf(c));
+            } else if (c == ' ' && number.length() > 0) { // Gestion des espaces
+                tokens.add(number.toString());
+                number.setLength(0);
             }
         }
-        if (!number.isEmpty())
-            tokens.add(number);
+
+        if (number.length() > 0) {
+            tokens.add(number.toString());
+        }
+
         return tokens;
     }
 
-    public boolean isOp(char c) {
-        return c == '+' || c == '-' || c == '/' || c == '*';
+    private boolean isNumber(String s) {
+        try {
+            Double.parseDouble(s);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
     }
 
-    public boolean isOp(String s) {
-        return isOp(s.charAt(0));
+    private boolean isOp(char c) {
+        return c == '+' || c == '-' || c == '*' || c == '/';
     }
 
-    public BinaryExpression makeOpExpression(String tokenOp, Expression left, Expression right) {
+    private boolean isOp(String s) {
+        return s.length() == 1 && isOp(s.charAt(0));
+    }
+
+    private int precedence(String op) {
+        return switch (op) {
+            case "+", "-" -> 1;
+            case "*", "/" -> 2;
+            default -> -1;
+        };
+    }
+
+    private BinaryExpression makeOpExpression(String tokenOp, Expression left, Expression right) {
         return switch (tokenOp) {
             case "+" -> new AdditionExpression(left, right);
             case "-" -> new SubstractionExpression(left, right);

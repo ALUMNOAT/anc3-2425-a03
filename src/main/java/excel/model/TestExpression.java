@@ -5,7 +5,7 @@ public class TestExpression {
         String s = "= 10 + 50 - 5 * 2 + 90 / 3";
         ExpressionBuilder builder = new ExpressionBuilder();
         Expression exp = builder.build(s);
-        System.out.println(exp.interpret());
+        System.out.println("Résultat: " + exp.interpret());
     }
 }
 
