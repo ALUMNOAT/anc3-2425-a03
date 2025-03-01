@@ -45,9 +45,14 @@ package anc3.spreadsheet.view {
         MySpreadsheetView(SpreadsheetViewModel)
     }
 
+    class HeaderView{
+        HeaderView(SpreadsheetViewModel)
+    }
+
 
 
     MainView ..> MySpreadsheetView : <<create>>
+    MainView ..> HeaderView : <<create>>
 
 }
 
@@ -84,6 +89,7 @@ package anc3.spreadsheet.viewmodel {
 
 BorderPane <|-- MainView
 SpreadsheetView <|-- MySpreadsheetView
+HBox <|-- HeaderView
 
 App ..> SpreadsheetModel : <<create>>
 App ..> SpreadsheetViewModel : <<create>>
@@ -93,6 +99,7 @@ SpreadsheetViewModel ..> SpreadsheetCellViewModel : <<create>>
 SpreadsheetModel ..> SpreadsheetCellModel : <<create>>
 
 MySpreadsheetView *-->  SpreadsheetViewModel
+HeaderView *--> SpreadsheetViewModel
 
 SpreadsheetViewModel *-->  SpreadsheetModel
 SpreadsheetCellViewModel *-->  SpreadsheetCellModel

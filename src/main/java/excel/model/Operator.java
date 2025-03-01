@@ -1,6 +1,14 @@
 package excel.model;
 
-public abstract class Operator {
-    public abstract int getToken(); // Method to get the token value
-    public abstract double apply(double a, double b); // Method to apply the operator
+public abstract class Operator implements Expression {
+    Expression left;
+    Expression right;
+
+    public Operator(Expression left, Expression right) {
+        this.left = left;
+        this.right = right;
+    }
+
+    @Override
+    public abstract int interpret(String context);
 }
