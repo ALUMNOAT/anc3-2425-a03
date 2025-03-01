@@ -33,15 +33,21 @@ public class SpreadsheetCellModel {
     }
 
     //POTENTIELLEMENT AJOUTER LE CALCUL ICI ??
-    public void setResult(String value){
-        Builder interpreter = new Builder(value);
-        // Interpret the expression
-        if (value != null){
-            String res = interpreter.interpret(value);
-            this.resultProperty.set(res);
-        }
-        else
+    public void setResult(String value) {
+        if (value != null) {
+            ExpressionBuilder interpreter = new ExpressionBuilder();
+            Expression exp = interpreter.build(value);
+
+            if (exp != null) {
+                String res = String.valueOf(exp.interpret());
+                this.resultProperty.set(res);
+            } else {
+                this.resultProperty.set("Erreur");
+            }
+        } else {
             this.resultProperty.set("");
+        }
     }
+
 
 }

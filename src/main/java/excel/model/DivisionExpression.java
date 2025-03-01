@@ -1,14 +1,17 @@
 package excel.model;
 
-public class DivisionExpression extends Operator {
+public class DivisionExpression extends BinaryExpression {
 
-    DivisionExpression(Expression left, Expression right) {
+    public DivisionExpression(Expression left, Expression right) {
         super(left, right);
     }
 
     @Override
-    public int interpret(String context) {
-        return left.interpret(context) / right.interpret(context);
+    public double interpret() {
+        double denominator = getRight().interpret();
+        if (denominator == 0) {
+            throw new ArithmeticException("Erreur : Division par zéro.");
+        }
+        return getLeft().interpret() / denominator;
     }
-
 }

@@ -1,15 +1,15 @@
 package excel.model;
 
-public class NumberExpression implements Expression {
+public class NumberExpression extends Expression {
 
-    private int number;
+    private final double number;
 
-    public NumberExpression(int number) {
+    public NumberExpression(double number) {
         this.number = number;
     }
 
     @Override
-    public int interpret(String context) {
+    public double interpret() {
         return number;
     }
 }

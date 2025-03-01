@@ -1,5 +1,6 @@
 package excel.model;
 
-public interface Expression {
-    int interpret(String context);
+public abstract class Expression {
+    protected Expression() {}
+    public abstract double interpret();
 }
