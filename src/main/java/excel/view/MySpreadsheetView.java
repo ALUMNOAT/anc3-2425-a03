@@ -67,18 +67,19 @@ public class MySpreadsheetView extends SpreadsheetView {
 
                 int finalRow = row;
                 int finalColumn = column;
-                int turn = 0;
+
 
                 // Synchronisation entre le modèle et la vue
                 cell.itemProperty().addListener((observableValue, oldVal, newVal) -> {
 // DOIT ETRE MODIFIE POUR ETRE MIS DANS MODEL ET VIEWMODEL ET CHANGER LE CALCUL PAR UNE FONCTION AU LIEU DE TOUT CELA
-                    if (!Objects.equals(oldVal, newVal)) { // si la valeur a changé
-                        System.out.println("avant value !");
-                        viewModel.setCellValue(finalRow, finalColumn, (String) newVal);
-                        System.out.println("après Value -> value : " + viewModel.getCellValue(finalRow,finalColumn)+ ", result : " + viewModel.getCellResult(finalRow,finalColumn));
+                    if (!Objects.equals(oldVal, newVal) && viewModel.getCellResult(finalRow,finalColumn)!= newVal) { // si la valeur a changé et que le résultat est différent de la nouvelle valeur (pour éviter double passage)
                         System.out.println("avant Result !");
                         viewModel.setCellResult(finalRow,finalColumn, (String) newVal);
                         System.out.println("après Result -> value : " + viewModel.getCellValue(finalRow,finalColumn)+ ", result : " + viewModel.getCellResult(finalRow,finalColumn));
+                        System.out.println("avant value !");
+                        viewModel.setCellValue(finalRow, finalColumn, (String) newVal);
+                        System.out.println("après Value -> value : " + viewModel.getCellValue(finalRow,finalColumn)+ ", result : " + viewModel.getCellResult(finalRow,finalColumn));
+                        cell.itemProperty().set(viewModel.getCellResult(finalRow,finalColumn));
 //                            if (editableProperty().get()){
 //                                String context = (String) newVal;
 //                                Builder interpreter = new Builder(context);
@@ -99,14 +100,21 @@ public class MySpreadsheetView extends SpreadsheetView {
                     }
                     // A SUPPRIMER LE DEBUG PAR LA SUITE
                     System.out.println("DEBUG : change view " + newVal);
-                    // viewModel.addAction("DEBUG : change view " + newVal); // TODO : remove
                 });
 
                 viewModel.getCellValueProperty(finalRow, finalColumn).addListener((observableValue, oldVal, newVal) -> {
-// DOIT ETRE MODIFIE POUR ETRE MIS DANS MODEL ET VIEWMODEL ET CHANGER LE CALCUL PAR UNE FONCTION AU LIEU DE TOUT CELA
+
                     if (!Objects.equals(oldVal, newVal)) {
                         System.out.println("ouh lala changment");
-                        cell.itemProperty().set(newVal);
+//                        cell.itemProperty().set(newVal);
+                        // AFFICHE LE RESULTAT MAIS PROVOQUE UN DOUBLE LISTENER
+                        cell.itemProperty().set(viewModel.getCellResult(finalRow,finalColumn));
+
+                        /*
+                        ACTUELLEMENT PROBLEME EN CAS DE CHANGEMENT DE LA VALEUR VERS RESULT (retourne dans le check de cell.itemproperty qui change value en result dans le modele...)
+                        donc pour le MOMENT : cell.itemProperty().set(newVal); où newval est value au lieu d'afficher le result (qui comme dit modifie value par result dans le modele)
+
+                        */
 //
 //
 //
@@ -128,7 +136,6 @@ public class MySpreadsheetView extends SpreadsheetView {
                     }
                     // A SUPPRIMER LE DEBUG PAR LA SUITE
                     System.out.println("DEBUG : change model " + newVal);
-                    // viewModel.addAction("DEBUG : change model " + newVal); // TODO : remove
                 });
 
                 list.add(cell);

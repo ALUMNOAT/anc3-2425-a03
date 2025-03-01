@@ -46,8 +46,8 @@ public class HeaderView  extends HBox {
         // mis à jour de la cellule si changement de cellule selectionnée
         operationField.setOnAction(event -> {
             if (viewModel.selectedCellProperty().get() != null) {
-                viewModel.selectedCellProperty().get().setValue(selectedCellValue.get());
                 viewModel.selectedCellProperty().get().setResult(selectedCellValue.get());
+                viewModel.selectedCellProperty().get().setValue(selectedCellValue.get());
             }
         });
     }
