@@ -23,7 +23,9 @@ public class Builder {
         Stack<Character> operators = new Stack<>();
 
         if (!expression.startsWith("=")) {
-            return new NumberExpression(Integer.parseInt(expression));
+            if (expression.matches("\\d+")) {
+                return new NumberExpression(Integer.parseInt(expression));
+            }
         }
 
         expression = expression.substring(1);

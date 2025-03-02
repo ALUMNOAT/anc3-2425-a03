@@ -1,10 +1,10 @@
 package excel.model;
 
-public abstract class Operator implements Expression {
+public abstract class BinaryExpression implements Expression {
     Expression left;
     Expression right;
 
-    public Operator(Expression left, Expression right) {
+    public BinaryExpression(Expression left, Expression right) {
         this.left = left;
         this.right = right;
     }

@@ -1,6 +1,6 @@
 package excel.model;
 
-public class DivisionExpression extends Operator {
+public class DivisionExpression extends BinaryExpression {
 
     DivisionExpression(Expression left, Expression right) {
         super(left, right);

@@ -1,6 +1,6 @@
 package excel.model;
 
-public class MultiplicationExpression extends Operator {
+public class MultiplicationExpression extends BinaryExpression {
 
         MultiplicationExpression(Expression left, Expression right) {
             super(left, right);
@@ -10,4 +10,5 @@ public class MultiplicationExpression extends Operator {
         public int interpret(String context) {
             return left.interpret(context) * right.interpret(context);
         }
+        
 }

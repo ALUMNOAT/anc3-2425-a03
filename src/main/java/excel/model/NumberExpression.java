@@ -12,4 +12,5 @@ public class NumberExpression implements Expression {
     public int interpret(String context) {
         return number;
     }
+
 }
