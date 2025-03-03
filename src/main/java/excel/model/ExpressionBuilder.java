@@ -18,6 +18,10 @@ public class ExpressionBuilder {
             System.out.println("Tokens: " + tokens); // Affichage des tokens analysés
             return buildExpression(tokens);
         }
+        if (isNumber(strExpr)) {
+            double value = Double.parseDouble(strExpr);
+            return new NumberExpression(value);
+        }
         return null;
     }
 
