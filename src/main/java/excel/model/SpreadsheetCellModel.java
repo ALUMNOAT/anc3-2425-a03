@@ -34,6 +34,13 @@ public class SpreadsheetCellModel {
         this.valueProperty.set(value);
     }
 
+    public int getCol() {
+        return col;
+    }
+
+    public int getRow() {
+        return row;
+    }
     //POTENTIELLEMENT AJOUTER LE CALCUL ICI ??
 
     /**

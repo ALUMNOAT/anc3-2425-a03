@@ -23,35 +23,56 @@ public class MySpreadsheetView extends SpreadsheetView {
         this.setPadding(new Insets(10));
         this.grid = createGridAndBindings();
         this.setGrid(this.grid);
-
-        this.editingCellProperty().addListener((observableValue, oldVal, newVal) -> {
-            if(newVal != null) {
-                System.out.println("edit cell");
-                viewModel.toggleEditable();
-            }
-        });
-
+        configEditLogic();
         layoutSpreadSheet();
 
-        // Gestion de la sélection de cellule
-        this.getSelectionModel().getSelectedCells().addListener((ListChangeListener<? super TablePosition>) change -> { // ajout d'un écouteur obsverant si il y a un changement de cellule selectionnée
-            while (change.next()) {
-                viewModel.toggleEditable();
-                if (!this.getSelectionModel().getSelectedCells().isEmpty()) { //vérifie si il y a bien une cellule sélectionné
-                    TablePosition<?, ?> cell = change.getAddedSubList().get(0);  // On récupère la cellule sélectionnée
-                    viewModel.setSelectedCell(cell.getRow(), cell.getColumn());
-                }
-            }
-        });
+
 
 
 
 
     }
 
+
     private void layoutSpreadSheet() {
         for (int column = 0; column < grid.getColumnCount(); column++) {
             this.getColumns().get(column).setPrefWidth(CELL_PREF_WIDTH);
+        }
+    }
+
+    private void configEditLogic(){
+        // ECouteur de la cellule en edition
+        this.editingCellProperty().addListener((observableValue, oldVal, newVal) -> {
+            if (newVal != null) {
+                var tablePosition = this.getSelectionModel().getSelectedCells().get(0);
+                int row = tablePosition.getRow();
+                int col = tablePosition.getColumn();
+
+                SpreadsheetCell spreadsheetCell = grid.getRows().get(row).get(col);
+                spreadsheetCell.itemProperty().set(viewModel.getCellValue(row, col));
+            } else { // permet de refresh les différentes cases (repasser en result ou pour les références en cas de changement)
+                updateCellDisplay();
+            }
+        });
+
+
+        // Ecouteur de la cellule selectionnée
+        this.getSelectionModel().getSelectedCells().addListener((ListChangeListener<? super TablePosition>) change -> { // ajout d'un écouteur obsverant si il y a un changement de cellule selectionnée
+            while (change.next()) {
+                if (!this.getSelectionModel().getSelectedCells().isEmpty()) {
+                    var tablePosition = change.getAddedSubList().get(0);
+                    viewModel.setSelectedCell(tablePosition.getRow(), tablePosition.getColumn());
+                }
+            }
+        });
+    }
+
+    private void updateCellDisplay() {
+        for (int row = 0; row < grid.getRowCount(); row++) {
+            for (int col = 0; col < grid.getColumnCount(); col++) {
+                SpreadsheetCell cell = grid.getRows().get(row).get(col);
+                cell.itemProperty().set(viewModel.getCellResult(row, col));
+            }
         }
     }
 
@@ -70,30 +91,14 @@ public class MySpreadsheetView extends SpreadsheetView {
 
                 // Synchronisation entre le modèle et la vue
                 cell.itemProperty().addListener((observableValue, oldVal, newVal) -> {
-// DOIT ETRE MODIFIE POUR ETRE MIS DANS MODEL ET VIEWMODEL ET CHANGER LE CALCUL PAR UNE FONCTION AU LIEU DE TOUT CELA
-                    if (!Objects.equals(oldVal, newVal) && viewModel.getCellResult(finalRow,finalColumn)!= newVal) { // si la valeur a changé et que le résultat est différent de la nouvelle valeur (pour éviter double passage)
-                        System.out.println("avant Result !");
+                    if (!Objects.equals(oldVal, newVal) && viewModel.getCellResult(finalRow,finalColumn)!= newVal && viewModel.getCellValue(finalRow,finalColumn) != newVal) { // si la valeur a changé et que le résultat est différent de la nouvelle valeur (pour éviter double passage)
+//                        System.out.println("avant Result !");
                         viewModel.setCellResult(finalRow,finalColumn, (String) newVal);
-                        System.out.println("après Result -> value : " + viewModel.getCellValue(finalRow,finalColumn)+ ", result : " + viewModel.getCellResult(finalRow,finalColumn));
-                        System.out.println("avant value !");
+//                        System.out.println("après Result -> value : " + viewModel.getCellValue(finalRow,finalColumn)+ ", result : " + viewModel.getCellResult(finalRow,finalColumn));
+//                        System.out.println("avant value !");
                         viewModel.setCellValue(finalRow, finalColumn, (String) newVal);
-                        System.out.println("après Value -> value : " + viewModel.getCellValue(finalRow,finalColumn)+ ", result : " + viewModel.getCellResult(finalRow,finalColumn));
+//                        System.out.println("après Value -> value : " + viewModel.getCellValue(finalRow,finalColumn)+ ", result : " + viewModel.getCellResult(finalRow,finalColumn));
                         cell.itemProperty().set(viewModel.getCellResult(finalRow,finalColumn));
-//                            if (editableProperty().get()){
-//                                String context = (String) newVal;
-//                                Builder interpreter = new Builder(context);
-//
-//                                // Interpret the expression
-//                                if (newVal != null){
-//                                    int result = interpreter.interpret((String) newVal);
-//                                    String res = Integer.toString(result);
-//                                    System.out.println("Result: " + result);
-//                                    cell.itemProperty().set(res);
-//                                }
-//
-//                            }// si la valeur a changé
-//                            else {
-//                                cell.itemProperty().set(newVal);}
 
 
                     }
@@ -104,34 +109,9 @@ public class MySpreadsheetView extends SpreadsheetView {
                 viewModel.getCellValueProperty(finalRow, finalColumn).addListener((observableValue, oldVal, newVal) -> {
 
                     if (!Objects.equals(oldVal, newVal)) {
-                        System.out.println("ouh lala changment");
+//                        System.out.println("ouh lala changment");
 //                        cell.itemProperty().set(newVal);
-                        // AFFICHE LE RESULTAT MAIS PROVOQUE UN DOUBLE LISTENER
                         cell.itemProperty().set(viewModel.getCellResult(finalRow,finalColumn));
-
-                        /*
-                        ACTUELLEMENT PROBLEME EN CAS DE CHANGEMENT DE LA VALEUR VERS RESULT (retourne dans le check de cell.itemproperty qui change value en result dans le modele...)
-                        donc pour le MOMENT : cell.itemProperty().set(newVal); où newval est value au lieu d'afficher le result (qui comme dit modifie value par result dans le modele)
-
-                        */
-//
-//
-//
-//                        if (editableProperty().get()){
-//                            String context = (String) newVal;
-//                            Builder interpreter = new Builder(context);
-//
-//                            // Interpret the expression
-//                            if (newVal != null){
-//                            int result = interpreter.interpret(newVal);
-//                            String res = Integer.toString(result);
-//                                System.out.println("Result: " + result);
-//                                cell.itemProperty().set(res);
-//                            }
-//
-//                        }// si la valeur a changé
-//                        else {
-//                        cell.itemProperty().set(newVal);}
                     }
                     // A SUPPRIMER LE DEBUG PAR LA SUITE
                     System.out.println("DEBUG : change model " + newVal);

@@ -3,9 +3,6 @@ package excel.viewmodel;
 import excel.model.SpreadsheetCellModel;
 import excel.model.SpreadsheetModel;
 import javafx.beans.property.*;
-import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
-import javafx.collections.ObservableList;
 
 public class SpreadsheetViewModel {
     private final SpreadsheetModel model;
@@ -59,11 +56,19 @@ public class SpreadsheetViewModel {
         model.setSelectedCell(row, column);
     }
 
-    public ReadOnlyBooleanProperty editableProperty() {
-        return this.editableProperty;
+    public SpreadsheetCellModel getSelectedCell(){
+        return model.selectedCellProperty().get();
     }
 
-    public void toggleEditable() {
-        this.editableProperty.set(this.editableProperty.not().get());
+    public int getSelectedCellRow(){
+        return model.selectedCellProperty().get().getRow();
     }
+
+    public int getSelectedCellColumn(){
+        return model.selectedCellProperty().get().getCol();
+    }
+
+
+
+
 }

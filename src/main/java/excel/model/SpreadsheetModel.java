@@ -62,4 +62,6 @@ public class SpreadsheetModel {
     public void setSelectedCell(int row, int column) {  // change la cellule selectionnée
         this.selectedCell.set(getCell(row,column));
     }
+
+
 }
