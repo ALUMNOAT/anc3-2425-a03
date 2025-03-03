@@ -10,12 +10,12 @@ public class ExpressionBuilder {
     }
 
     public Expression build(String strExpr) {
-        if (strExpr.isEmpty()){
+        if (strExpr.isEmpty()) {
             return null;
         }
         if (strExpr.charAt(0) == '=') {
             List<String> tokens = tokenize(strExpr.substring(1));
-            System.out.println("Tokens: " + tokens); // Affichage des tokens analysés
+            System.out.println("Tokens: " + tokens); // Debugging
             return buildExpression(tokens);
         }
         if (isNumber(strExpr)) {
@@ -35,7 +35,9 @@ public class ExpressionBuilder {
             } else if (isReference(token)) { // NEW: Handle references like A1, B2
                 values.push(new ReferenceExpression(token, spreadsheet));
             } else if (isOp(token)) {
+                // ⬇️ FIX: Ensure lower precedence operators are applied later
                 while (!operators.isEmpty() && precedence(operators.peek()) >= precedence(token)) {
+                    if (values.size() < 2) return null; // Prevent Empty Stack Error
                     Expression right = values.pop();
                     Expression left = values.pop();
                     values.push(makeOpExpression(operators.pop(), left, right));
@@ -44,13 +46,15 @@ public class ExpressionBuilder {
             }
         }
 
+        // ⬇️ FIX: Ensure all operators are applied in correct order
         while (!operators.isEmpty()) {
+            if (values.size() < 2) return null; // Prevent Empty Stack Error
             Expression right = values.pop();
             Expression left = values.pop();
             values.push(makeOpExpression(operators.pop(), left, right));
         }
 
-        return values.pop();
+        return values.isEmpty() ? null : values.pop(); // Ensure not empty
     }
 
     private boolean isReference(String token) {
@@ -62,7 +66,9 @@ public class ExpressionBuilder {
         List<String> tokens = new ArrayList<>();
         StringBuilder currentToken = new StringBuilder();
 
-        for (char c : strExpr.toCharArray()) {
+        for (int i = 0; i < strExpr.length(); i++) {
+            char c = strExpr.charAt(i);
+
             if (Character.isLetterOrDigit(c)) {
                 currentToken.append(c);
             } else {
@@ -70,9 +76,18 @@ public class ExpressionBuilder {
                     tokens.add(currentToken.toString());
                     currentToken.setLength(0);
                 }
-                if (!Character.isWhitespace(c)) {
-                    tokens.add(String.valueOf(c));
+
+                // Check for multi-character operators
+                if (i + 1 < strExpr.length()) {
+                    String twoCharOp = strExpr.substring(i, i + 2);
+                    if (twoCharOp.equals("<=") || twoCharOp.equals(">=")) {
+                        tokens.add(twoCharOp);
+                        i++; // Skip the next character
+                        continue;
+                    }
                 }
+
+                tokens.add(String.valueOf(c));
             }
         }
 
@@ -98,13 +113,14 @@ public class ExpressionBuilder {
     }
 
     private boolean isOp(String s) {
-        return s.length() == 1 && isOp(s.charAt(0));
+        return s.equals("+") || s.equals("-") || s.equals("*") || s.equals("/") || s.equals(">") || s.equals("<") || s.equals("<=") || s.equals(">=");
     }
 
     private int precedence(String op) {
         return switch (op) {
-            case "+", "-" -> 1;
-            case "*", "/" -> 2;
+            case ">", "<", "<=", ">=" -> 1;   // Lower precedence (evaluated last)
+            case "+", "-" -> 2;
+            case "*", "/" -> 3;
             default -> -1;
         };
     }
@@ -115,7 +131,12 @@ public class ExpressionBuilder {
             case "-" -> new SubstractionExpression(left, right);
             case "*" -> new MultiplicationExpression(left, right);
             case "/" -> new DivisionExpression(left, right);
+            case ">" -> new GreaterThanExpression(left, right);
+            case "<" -> new LowerThanExpression(left, right);
+            case "<=" -> new LessThanOrEqualExpression(left, right);
+            case ">=" -> new BiggerThanOrEqualExpression(left, right);
             default -> null;
         };
     }
 }
+
