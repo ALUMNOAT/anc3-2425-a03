@@ -34,8 +34,11 @@ public class ExpressionBuilder {
                 values.push(new NumberExpression(Double.parseDouble(token)));
             } else if (isReference(token)) {
                 values.push(new ReferenceExpression(token, spreadsheet));
+            } else if (isBoolean(token)) {
+                // Handle boolean literals
+                values.push(new BooleanExpression(Boolean.parseBoolean(token)));
             } else if (isOp(token)) {
-                // ⬇️ FIX: Ensure lower precedence operators are applied later
+                // Ensure lower precedence operators are applied later
                 while (!operators.isEmpty() && precedence(operators.peek()) >= precedence(token)) {
                     if (values.size() < 2) return null; // Prevent Empty Stack Error
                     Expression right = values.pop();
@@ -55,6 +58,11 @@ public class ExpressionBuilder {
         }
 
         return values.isEmpty() ? null : values.pop(); // Ensure not empty
+    }
+
+    // Add this method
+    private boolean isBoolean(String s) {
+        return s.equalsIgnoreCase("true") || s.equalsIgnoreCase("false");
     }
 
     private boolean isReference(String token) {
