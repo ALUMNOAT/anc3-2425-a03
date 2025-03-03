@@ -9,10 +9,18 @@ public class ReferenceExpression extends Expression {
         this.spreadsheet = spreadsheet;
     }
 
-    @Override
-    public double interpret() {
-        return spreadsheet.getCellValue(cellReference); // Demande la valeur directement
+    public Object interpret() {
+        String value = String.valueOf(spreadsheet.getCellValue(cellReference)); // Fetch cell content
+        if (value.equalsIgnoreCase("true")) return true;
+        if (value.equalsIgnoreCase("false")) return false;
+        try {
+            return Double.parseDouble(value);
+        } catch (NumberFormatException e) {
+            return "#VALEUR"; // Error handling
+        }
     }
+
+
 }
 
 

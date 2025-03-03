@@ -7,14 +7,22 @@ public class MultiplicationExpression extends BinaryExpression {
     }
 
     @Override
-    public double interpret() {
-        double leftVal = getLeft().interpret();
-        double rightVal = getRight().interpret();
+    public Object interpret() {
+        Object leftValue = getLeft().interpret();
+        Object rightValue = getRight().interpret();
 
-        if (leftVal == 0 || rightVal == 0) return 0; // Optimisation : multiplication par 0
-        if (leftVal == 1) return rightVal; // Optimisation : *1 inutile
-        if (rightVal == 1) return leftVal; // Optimisation : *1 inutile
+        if (leftValue instanceof Double && rightValue instanceof Double) {
+            double leftNum = (double) leftValue;
+            double rightNum = (double) rightValue;
 
-        return leftVal * rightVal;
+            // Optimizations
+            if (leftNum == 0 || rightNum == 0) return 0.0; // Multiplication by 0
+            if (leftNum == 1) return rightNum; // *1 is unnecessary
+            if (rightNum == 1) return leftNum; // *1 is unnecessary
+
+            return leftNum * rightNum;
+        }
+        return "#VALEUR"; // Error case
     }
 }
+

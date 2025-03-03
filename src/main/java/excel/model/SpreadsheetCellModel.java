@@ -60,9 +60,15 @@ public class SpreadsheetCellModel {
             Expression exp = interpreter.build(value);
 
             if (exp != null) {
-                DecimalFormat df = new DecimalFormat("#.##");
-                String res = df.format(exp.interpret()).replace(',', '.'); // Assure le point comme séparateur décimal
-                this.resultProperty.set(res);
+                Object result = exp.interpret(); // Peut être un Double, une String, etc.
+
+                if (result instanceof Double) {
+                    DecimalFormat df = new DecimalFormat("#.##");
+                    String res = df.format(result).replace(',', '.'); // Assure le point comme séparateur décimal
+                    this.resultProperty.set(res);
+                } else {
+                    this.resultProperty.set(result.toString()); // Affiche directement les erreurs / booléens
+                }
             } else {
                 this.resultProperty.set("Erreur");
             }
@@ -70,6 +76,7 @@ public class SpreadsheetCellModel {
             this.resultProperty.set("");
         }
     }
+
 
 
 }

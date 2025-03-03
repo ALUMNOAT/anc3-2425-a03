@@ -7,11 +7,19 @@ public class DivisionExpression extends BinaryExpression {
     }
 
     @Override
-    public double interpret() {
-        double denominator = getRight().interpret();
-        if (denominator == 0) {
-            throw new ArithmeticException("Erreur : Division par zéro.");
+    public Object interpret() {
+        Object rightValue = getRight().interpret();
+        Object leftValue = getLeft().interpret();
+
+        // Vérifier que les deux opérandes sont bien des nombres
+        if (rightValue instanceof Double && leftValue instanceof Double) {
+            double denominator = (double) rightValue;
+            if (denominator == 0) {
+                return "#VALEUR";
+            }
+            return (double) leftValue / denominator;
         }
-        return getLeft().interpret() / denominator;
+        return "#VALEUR"; // Si un des opérandes n'est pas un nombre
     }
 }
+

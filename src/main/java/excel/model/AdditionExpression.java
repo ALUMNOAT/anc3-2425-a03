@@ -7,7 +7,14 @@ public class AdditionExpression extends BinaryExpression {
     }
 
     @Override
-    public double interpret() {
-    return getLeft().interpret() + getRight().interpret();
+    public Object interpret() {
+        Object leftValue = getLeft().interpret();
+        Object rightValue = getRight().interpret();
+
+        if (leftValue instanceof Double && rightValue instanceof Double) {
+            return (double) leftValue + (double) rightValue;
+        }
+        return "#VALEUR";
     }
+
 }
