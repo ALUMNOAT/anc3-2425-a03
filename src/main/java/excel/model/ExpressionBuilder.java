@@ -3,6 +3,12 @@ package excel.model;
 import java.util.*;
 
 public class ExpressionBuilder {
+    private final SpreadsheetModel spreadsheet;
+
+    public ExpressionBuilder(SpreadsheetModel spreadsheet) {
+        this.spreadsheet = spreadsheet;
+    }
+
     public Expression build(String strExpr) {
         if (strExpr.charAt(0) == '=') {
             List<String> tokens = tokenize(strExpr.substring(1));
@@ -19,6 +25,8 @@ public class ExpressionBuilder {
         for (String token : tokens) {
             if (isNumber(token)) {
                 values.push(new NumberExpression(Double.parseDouble(token)));
+            } else if (isReference(token)) { // NEW: Handle references like A1, B2
+                values.push(new ReferenceExpression(token, spreadsheet));
             } else if (isOp(token)) {
                 while (!operators.isEmpty() && precedence(operators.peek()) >= precedence(token)) {
                     Expression right = values.pop();
@@ -38,31 +46,36 @@ public class ExpressionBuilder {
         return values.pop();
     }
 
+    private boolean isReference(String token) {
+        return token.matches("^[A-Z]+[0-9]+$"); // Example: A1, B2, Z99
+    }
+
+
     private List<String> tokenize(String strExpr) {
         List<String> tokens = new ArrayList<>();
-        StringBuilder number = new StringBuilder();
+        StringBuilder currentToken = new StringBuilder();
 
         for (char c : strExpr.toCharArray()) {
-            if (Character.isDigit(c) || c == '.') {
-                number.append(c);
-            } else if (isOp(c)) {
-                if (number.length() > 0) {
-                    tokens.add(number.toString());
-                    number.setLength(0);
+            if (Character.isLetterOrDigit(c)) {
+                currentToken.append(c);
+            } else {
+                if (currentToken.length() > 0) {
+                    tokens.add(currentToken.toString());
+                    currentToken.setLength(0);
                 }
-                tokens.add(String.valueOf(c));
-            } else if (c == ' ' && number.length() > 0) { // Gestion des espaces
-                tokens.add(number.toString());
-                number.setLength(0);
+                if (!Character.isWhitespace(c)) {
+                    tokens.add(String.valueOf(c));
+                }
             }
         }
 
-        if (number.length() > 0) {
-            tokens.add(number.toString());
+        if (currentToken.length() > 0) {
+            tokens.add(currentToken.toString());
         }
 
         return tokens;
     }
+
 
     private boolean isNumber(String s) {
         try {

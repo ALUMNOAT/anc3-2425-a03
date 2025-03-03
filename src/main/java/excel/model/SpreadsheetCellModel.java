@@ -10,12 +10,14 @@ public class SpreadsheetCellModel {
     private final SimpleObjectProperty<String> resultProperty = new SimpleObjectProperty<>();
     private final int row;
     private  final int col;
+    private final SpreadsheetModel spreadsheet;
 
-    public SpreadsheetCellModel(String value, String result, int row, int col){
+    public SpreadsheetCellModel(String value, String result, int row, int col, SpreadsheetModel spreadsheet){
         this.valueProperty.set(value);
         this.resultProperty.set(result);
         this.row = row;
         this.col = col;
+        this.spreadsheet = spreadsheet;
     }
 
     public ReadOnlyObjectProperty<String> valueProperty(){ return this.valueProperty;}
@@ -47,7 +49,7 @@ public class SpreadsheetCellModel {
      */
     public void setResult(String value) {
         if (value != null) {
-            ExpressionBuilder interpreter = new ExpressionBuilder();
+            ExpressionBuilder interpreter = new ExpressionBuilder(this.spreadsheet);
             Expression exp = interpreter.build(value);
 
             if (exp != null) {
