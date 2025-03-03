@@ -60,14 +60,18 @@ public class SpreadsheetCellModel {
             Expression exp = interpreter.build(value);
 
             if (exp != null) {
-                Object result = exp.interpret(); // Peut être un Double, une String, etc.
+                Object result = exp.interpret(); // Can be a Double, String, etc.
 
                 if (result instanceof Double) {
                     DecimalFormat df = new DecimalFormat("#.##");
-                    String res = df.format(result).replace(',', '.'); // Assure le point comme séparateur décimal
+                    String res = df.format(result).replace(',', '.'); // Ensure decimal point
                     this.resultProperty.set(res);
+                } else if (result instanceof Boolean) {
+                    // Handle boolean results
+                    this.resultProperty.set(result.toString());
                 } else {
-                    this.resultProperty.set(result.toString()); // Affiche directement les erreurs / booléens
+                    // Handle other cases like error messages or strings
+                    this.resultProperty.set(result != null ? result.toString() : "Erreur");
                 }
             } else {
                 this.resultProperty.set("Erreur");
@@ -76,6 +80,7 @@ public class SpreadsheetCellModel {
             this.resultProperty.set("");
         }
     }
+
 
 
 

@@ -64,17 +64,22 @@ public class SpreadsheetModel {
     }
 
 
-    public double getCellValue(String cellReference) {
+    public Object getCellValue(String cellReference) {
         int[] coords = parseCellReference(cellReference);
-        if (coords == null) return 0.0; // Si la référence est invalide, retourne 0
+        if (coords == null) return null; // Return null for invalid references
         SpreadsheetCellModel cell = getCell(coords[0], coords[1]);
+        String result = cell.getResult(); // Assuming getResult() returns the cell value
+
+        if (result.equalsIgnoreCase("true")) return true;
+        if (result.equalsIgnoreCase("false")) return false;
 
         try {
-            return Double.parseDouble(cell.getResult());
+            return Double.parseDouble(result);
         } catch (NumberFormatException e) {
-            return 0.0; // Si ce n'est pas un nombre, retourne 0
+            return "#VALEUR"; // Error handling for invalid numbers
         }
     }
+
 
     private int[] parseCellReference(String reference) {
         if (!reference.matches("[A-Z]+[0-9]+")) return null; // Vérifie la syntaxe (ex: "A1")
