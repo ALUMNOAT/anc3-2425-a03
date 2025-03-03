@@ -25,11 +25,17 @@ public class MySpreadsheetView extends SpreadsheetView {
         this.setGrid(this.grid);
 
         this.editingCellProperty().addListener((observableValue, oldVal, newVal) -> {
-            if(newVal != null) {
-                System.out.println("edit cell");
+            if (newVal != null) {
+                TablePosition<?, ?> selectedCell = this.getSelectionModel().getSelectedCells().get(0);
+                int row = selectedCell.getRow();
+                int col = selectedCell.getColumn();
+                char columnLetter = (char) ('A' + col); // Convertit 0 -> 'A', 1 -> 'B', etc.
+                int excelRow = row + 1; // Convertit 0 -> 1, 1 -> 2, etc.
+                System.out.println("edit cell (" + row + ", " + col + ") -> " + columnLetter + excelRow);
                 viewModel.toggleEditable();
             }
         });
+
 
         layoutSpreadSheet();
 
