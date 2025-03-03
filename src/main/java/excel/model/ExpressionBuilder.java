@@ -32,7 +32,7 @@ public class ExpressionBuilder {
         for (String token : tokens) {
             if (isNumber(token)) {
                 values.push(new NumberExpression(Double.parseDouble(token)));
-            } else if (isReference(token)) { // NEW: Handle references like A1, B2
+            } else if (isReference(token)) {
                 values.push(new ReferenceExpression(token, spreadsheet));
             } else if (isOp(token)) {
                 // ⬇️ FIX: Ensure lower precedence operators are applied later
@@ -69,34 +69,40 @@ public class ExpressionBuilder {
         for (int i = 0; i < strExpr.length(); i++) {
             char c = strExpr.charAt(i);
 
+            // Handle letters or digits (part of variables or numbers)
             if (Character.isLetterOrDigit(c)) {
                 currentToken.append(c);
             } else {
+                // When we encounter a space or an operator
                 if (currentToken.length() > 0) {
                     tokens.add(currentToken.toString());
                     currentToken.setLength(0);
                 }
 
-                // Check for multi-character operators
-                if (i + 1 < strExpr.length()) {
-                    String twoCharOp = strExpr.substring(i, i + 2);
-                    if (twoCharOp.equals("<=") || twoCharOp.equals(">=")) {
-                        tokens.add(twoCharOp);
-                        i++; // Skip the next character
-                        continue;
+                if (!Character.isWhitespace(c)) {
+                    // Handle multi-character operators (like <=, >=, ==, etc.)
+                    if (i + 1 < strExpr.length()) {
+                        String twoCharOp = strExpr.substring(i, i + 2);
+                        if (twoCharOp.equals("<=") || twoCharOp.equals(">=")) {
+                            tokens.add(twoCharOp);
+                            i++; // Skip the next character
+                            continue;
+                        }
                     }
+                    // Add single-character operators
+                    tokens.add(String.valueOf(c));
                 }
-
-                tokens.add(String.valueOf(c));
             }
         }
 
+        // Add the last token if there's any remaining
         if (currentToken.length() > 0) {
             tokens.add(currentToken.toString());
         }
 
         return tokens;
     }
+
 
 
     private boolean isNumber(String s) {
@@ -106,10 +112,6 @@ public class ExpressionBuilder {
         } catch (NumberFormatException e) {
             return false;
         }
-    }
-
-    private boolean isOp(char c) {
-        return c == '+' || c == '-' || c == '*' || c == '/';
     }
 
     private boolean isOp(String s) {
@@ -139,4 +141,3 @@ public class ExpressionBuilder {
         };
     }
 }
-
