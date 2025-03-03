@@ -25,7 +25,7 @@ public class SpreadsheetModel {
     private void addNewRow() {
         ObservableList<SpreadsheetCellModel> newRow = FXCollections.observableArrayList();
         for (int column = 0; column < cols; column++) {
-            newRow.add(new SpreadsheetCellModel("", "",data.size(), column));
+            newRow.add(new SpreadsheetCellModel("", "",data.size(), column, this));
         }
         data.add(newRow);
     }
@@ -62,6 +62,37 @@ public class SpreadsheetModel {
     public void setSelectedCell(int row, int column) {  // change la cellule selectionnée
         this.selectedCell.set(getCell(row,column));
     }
+
+
+    public double getCellValue(String cellReference) {
+        int[] coords = parseCellReference(cellReference);
+        if (coords == null) return 0.0; // Si la référence est invalide, retourne 0
+        SpreadsheetCellModel cell = getCell(coords[0], coords[1]);
+
+        try {
+            return Double.parseDouble(cell.getResult());
+        } catch (NumberFormatException e) {
+            return 0.0; // Si ce n'est pas un nombre, retourne 0
+        }
+    }
+
+    private int[] parseCellReference(String reference) {
+        if (!reference.matches("[A-Z]+[0-9]+")) return null; // Vérifie la syntaxe (ex: "A1")
+
+        int column = 0;
+        int rowIndex = 0;
+
+        for (char c : reference.toCharArray()) {
+            if (Character.isLetter(c)) {
+                column = column * 26 + (c - 'A'); // Convertit "A" → 0, "B" → 1, ..., "Z" → 25
+            } else {
+                rowIndex = rowIndex * 10 + (c - '0'); // Récupère l'index de la ligne
+            }
+        }
+
+        return new int[]{rowIndex - 1, column}; // Indices commencent à 0
+    }
+
 
 
 }

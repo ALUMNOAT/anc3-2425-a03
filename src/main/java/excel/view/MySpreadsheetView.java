@@ -71,6 +71,9 @@ public class MySpreadsheetView extends SpreadsheetView {
         for (int row = 0; row < grid.getRowCount(); row++) {
             for (int col = 0; col < grid.getColumnCount(); col++) {
                 SpreadsheetCell cell = grid.getRows().get(row).get(col);
+                String cellValue = viewModel.getCellValue(row,col);
+                viewModel.setCellValue(row,col,cellValue);
+                viewModel.setCellResult(row,col,cellValue);
                 cell.itemProperty().set(viewModel.getCellResult(row, col));
             }
         }
