@@ -115,6 +115,7 @@ public class MySpreadsheetView extends SpreadsheetView {
 //                        System.out.println("ouh lala changment");
 //                        cell.itemProperty().set(newVal);
                         cell.itemProperty().set(viewModel.getCellResult(finalRow,finalColumn));
+                        updateCellDisplay();
                     }
                     // A SUPPRIMER LE DEBUG PAR LA SUITE
                     System.out.println("DEBUG : change model " + newVal);
