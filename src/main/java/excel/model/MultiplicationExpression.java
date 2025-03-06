@@ -22,7 +22,7 @@ public class MultiplicationExpression extends BinaryExpression {
 
             return leftNum * rightNum;
         }
-        return "#VALEUR"; // Error case
+        return "SYNTAX_ERROR"; // Error case
     }
 }
 

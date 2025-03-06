@@ -19,7 +19,7 @@ public class DivisionExpression extends BinaryExpression {
             }
             return (double) leftValue / denominator;
         }
-        return "#VALEUR"; // Si un des opérandes n'est pas un nombre
+        return "SYNTAX_ERROR"; // Si un des opérandes n'est pas un nombre
     }
 }
 

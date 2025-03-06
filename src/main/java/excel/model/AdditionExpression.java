@@ -14,7 +14,7 @@ public class AdditionExpression extends BinaryExpression {
         if (leftValue instanceof Double && rightValue instanceof Double) {
             return (double) leftValue + (double) rightValue;
         }
-        return "#VALEUR";
+        return "SYNTAX_ERROR";
     }
 
 }

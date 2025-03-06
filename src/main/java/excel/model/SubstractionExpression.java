@@ -20,6 +20,6 @@ public class SubstractionExpression extends BinaryExpression {
 
             return leftNum - rightNum;
         }
-        return "#VALEUR";
+        return "SYNTAX_ERROR";
     }
 }
