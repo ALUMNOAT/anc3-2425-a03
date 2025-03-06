@@ -47,6 +47,11 @@ public class ExpressionBuilder {
             }
         }
 
+        // Check for trailing operator
+        if (!operators.isEmpty() && values.size() < 2) {
+            return null; // Return null for invalid expression
+        }
+
         // Apply any remaining unary NOT operators
         while (!operators.isEmpty() && operators.peek().equalsIgnoreCase("NOT")) {
             if (values.isEmpty()) return null; // Prevent Empty Stack Error
