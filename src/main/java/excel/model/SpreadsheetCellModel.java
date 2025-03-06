@@ -56,6 +56,11 @@ public class SpreadsheetCellModel {
      */
     public void setResult(String value) {
         if (value != null && !value.isEmpty()) {
+            if (!value.startsWith("=")) {
+                this.resultProperty.set(value);
+                return;
+            }
+
             ExpressionBuilder interpreter = new ExpressionBuilder(this.spreadsheet);
             Expression exp = interpreter.build(value);
 
@@ -74,12 +79,13 @@ public class SpreadsheetCellModel {
                     this.resultProperty.set(result != null ? result.toString() : "Erreur");
                 }
             } else {
-                this.resultProperty.set("Erreur");
+                this.resultProperty.set("#VALEUR");
             }
         } else {
             this.resultProperty.set("");
         }
     }
+
 
 
 
