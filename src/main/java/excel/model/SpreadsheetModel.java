@@ -70,11 +70,11 @@ public class SpreadsheetModel {
 
     public Object getCellValue(String cellReference) {
         if (hasCircularReference(cellReference)) {
-            return "#CIRCULAR_REF"; // Cycle detected
+            return "#CIRCULAR REF"; // Cycle detected
         }
 
         int[] coords = parseCellReference(cellReference);
-        if (coords == null) return "#VALUE!"; // Return error if invalid reference
+        if (coords == null) return "#VALEUR"; // Return error if invalid reference
         SpreadsheetCellModel cell = getCell(coords[0], coords[1]);
         String result = cell.getResult(); // Assuming getResult() returns the cell value
 
@@ -88,7 +88,7 @@ public class SpreadsheetModel {
         try {
             return Double.parseDouble(result);
         } catch (NumberFormatException e) {
-            return "#VALUE!"; // Return error for non-numeric results
+            return "#VALEUR"; // Return error for non-numeric results
         }
     }
 
