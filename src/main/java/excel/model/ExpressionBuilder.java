@@ -97,6 +97,14 @@ public class ExpressionBuilder {
                             continue;
                         }
                     }
+                    if (i + 2 < strExpr.length()) { // ✅ Handle "AND"
+                        String threeCharOp = strExpr.substring(i, i + 3);
+                        if (threeCharOp.equalsIgnoreCase("AND")) {
+                            tokens.add(threeCharOp); // Convert to uppercase for consistency
+                            i += 2; // Skip the next two characters
+                            continue;
+                        }
+                    }
                     // Add single-character operators
                     tokens.add(String.valueOf(c));
                 }
@@ -123,11 +131,12 @@ public class ExpressionBuilder {
     }
 
     private boolean isOp(String s) {
-        return s.equals("+") || s.equals("-") || s.equals("*") || s.equals("/") || s.equals(">") || s.equals("<") || s.equals("<=") || s.equals(">=") || s.equals("=");
+        return s.equals("+") || s.equals("-") || s.equals("*") || s.equals("/") || s.equals(">") || s.equals("<") || s.equals("<=") || s.equals(">=") || s.equals("=") || s.equalsIgnoreCase("AND");
     }
 
     private int precedence(String op) {
         return switch (op) {
+            case "AND" -> 0;
             case ">", "<", "<=", ">=", "=" -> 1;   // Lower precedence (evaluated last)
             case "+", "-" -> 2;
             case "*", "/" -> 3;
@@ -136,7 +145,7 @@ public class ExpressionBuilder {
     }
 
     private BinaryExpression makeOpExpression(String tokenOp, Expression left, Expression right) {
-        return switch (tokenOp) {
+        return switch (tokenOp.toUpperCase()) {
             case "+" -> new AdditionExpression(left, right);
             case "-" -> new SubstractionExpression(left, right);
             case "*" -> new MultiplicationExpression(left, right);
@@ -146,6 +155,7 @@ public class ExpressionBuilder {
             case "<=" -> new LessThanOrEqualExpression(left, right);
             case ">=" -> new BiggerThanOrEqualExpression(left, right);
             case "=" -> new EqualExpression(left, right);
+            case "AND" -> new AndExpression(left, right);
             default -> null;
         };
     }
