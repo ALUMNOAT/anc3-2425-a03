@@ -1,5 +1,7 @@
 package excel.model;
 
+import java.util.HashSet;
+
 public class ReferenceExpression extends Expression {
     private final String cellReference;
     private final SpreadsheetModel spreadsheet;
@@ -11,17 +13,25 @@ public class ReferenceExpression extends Expression {
 
     @Override
     public Object interpret() {
+        // Check for circular reference before fetching the value
+        if (spreadsheet.hasCircularReference(cellReference)) {
+            return "#CIRCULAR REF";
+        }
+
         String value = String.valueOf(spreadsheet.getCellValue(cellReference)); // Fetch cell content
+
         // Check for boolean values
         if (value.equalsIgnoreCase("true")) return true;
         if (value.equalsIgnoreCase("false")) return false;
+
         try {
             return Double.parseDouble(value);
         } catch (NumberFormatException e) {
-            return "#VALEUR"; // Error handling
+            return "#VALEUR"; // Error handling for invalid numbers
         }
     }
 }
+
 
 
 

@@ -6,6 +6,8 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+
+import java.util.*;
 import java.util.stream.IntStream;
 
 
@@ -15,6 +17,8 @@ public class SpreadsheetModel {
     private final ObjectProperty<SpreadsheetCellModel> selectedCell = new SimpleObjectProperty<>();
     private final ObservableList<ObservableList<SpreadsheetCellModel>> data = FXCollections.observableArrayList(
             item -> new Observable[]{});
+
+    private final Map<String, Set<String>> dependencies = new HashMap<>();
 
     public SpreadsheetModel(int rows, int cols){
         this.rows = rows;
@@ -65,8 +69,12 @@ public class SpreadsheetModel {
 
 
     public Object getCellValue(String cellReference) {
+        if (detectCycle(cellReference, new HashSet<>())) {
+            return "#Circular_Error"; // Cycle detected
+        }
+
         int[] coords = parseCellReference(cellReference);
-        if (coords == null) return null; // Return null for invalid references
+        if (coords == null) return null;
         SpreadsheetCellModel cell = getCell(coords[0], coords[1]);
         String result = cell.getResult(); // Assuming getResult() returns the cell value
 
@@ -76,9 +84,10 @@ public class SpreadsheetModel {
         try {
             return Double.parseDouble(result);
         } catch (NumberFormatException e) {
-            return "#VALEUR"; // Error handling for invalid numbers
+            return "#VALEUR";
         }
     }
+
 
 
     private int[] parseCellReference(String reference) {
@@ -97,6 +106,46 @@ public class SpreadsheetModel {
 
         return new int[]{rowIndex - 1, column}; // Indices commencent à 0
     }
+
+    public void updateDependencies(String cell, String formula) {
+        dependencies.put(cell, extractReferences(formula));
+    }
+
+    private Set<String> extractReferences(String formula) {
+        Set<String> refs = new HashSet<>();
+        if (formula.startsWith("=")) {
+            String[] tokens = formula.substring(1).split("[+\\-*/><=()]"); // Tokenize
+            for (String token : tokens) {
+                if (token.matches("^[A-Z]+[0-9]+$")) { // If it's a reference like A1, B2
+                    refs.add(token);
+                }
+            }
+        }
+        return refs;
+    }
+
+    private boolean detectCycle(String cell, Set<String> visited) {
+        if (visited.contains(cell)) return true; // Cycle detected
+        visited.add(cell);
+
+        Set<String> refs = dependencies.getOrDefault(cell, Collections.emptySet());
+        for (String ref : refs) {
+            if (detectCycle(ref, visited)) {
+                return true;
+            }
+        }
+
+        visited.remove(cell);
+        return false;
+    }
+
+    public boolean hasCircularReference(String cellReference) {
+        return detectCycle(cellReference, new HashSet<>());
+    }
+
+
+
+
 
 
 

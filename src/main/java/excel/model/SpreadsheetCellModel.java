@@ -45,6 +45,13 @@ public class SpreadsheetCellModel {
     }
     //POTENTIELLEMENT AJOUTER LE CALCUL ICI ??
 
+    public String getCellReference() {
+        char columnLetter = (char) ('A' + col); // Convert column index to letter
+        int rowIndex = row + 1; // Convert zero-based index to one-based
+        return String.valueOf(columnLetter) + rowIndex; // Combine to form "A1", "B2", etc.
+    }
+
+
     /**
      * Met à jour le résultat de la cellule en évaluant son expression.
      * <p>
@@ -60,6 +67,8 @@ public class SpreadsheetCellModel {
                 this.resultProperty.set(value);
                 return;
             }
+
+            spreadsheet.updateDependencies(getCellReference(), value);
 
             ExpressionBuilder interpreter = new ExpressionBuilder(this.spreadsheet);
             Expression exp = interpreter.build(value);
@@ -87,6 +96,7 @@ public class SpreadsheetCellModel {
             this.resultProperty.set("");
         }
     }
+
 
 
 
