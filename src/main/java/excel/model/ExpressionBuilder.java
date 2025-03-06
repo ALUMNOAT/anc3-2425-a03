@@ -88,10 +88,10 @@ public class ExpressionBuilder {
                 }
 
                 if (!Character.isWhitespace(c)) {
-                    // Handle multi-character operators (like <=, >=, ==, etc.)
+                    // Handle multi-character operators (like <=, >=, or, etc.)
                     if (i + 1 < strExpr.length()) {
                         String twoCharOp = strExpr.substring(i, i + 2);
-                        if (twoCharOp.equals("<=") || twoCharOp.equals(">=")) {
+                        if (twoCharOp.equals("<=") || twoCharOp.equals(">=") || twoCharOp.equalsIgnoreCase("OR")) {
                             tokens.add(twoCharOp);
                             i++; // Skip the next character
                             continue;
@@ -131,15 +131,16 @@ public class ExpressionBuilder {
     }
 
     private boolean isOp(String s) {
-        return s.equals("+") || s.equals("-") || s.equals("*") || s.equals("/") || s.equals(">") || s.equals("<") || s.equals("<=") || s.equals(">=") || s.equals("=") || s.equalsIgnoreCase("AND");
+        return s.equals("+") || s.equals("-") || s.equals("*") || s.equals("/") || s.equals(">") || s.equals("<") || s.equals("<=") || s.equals(">=") || s.equals("=") || s.equalsIgnoreCase("AND") || s.equalsIgnoreCase("OR");
     }
 
     private int precedence(String op) {
         return switch (op) {
-            case "AND" -> 0;
-            case ">", "<", "<=", ">=", "=" -> 1;   // Lower precedence (evaluated last)
-            case "+", "-" -> 2;
-            case "*", "/" -> 3;
+            case "OR" -> 1;
+            case "AND" -> 2;
+            case ">", "<", "<=", ">=", "=" -> 4;   // Lower precedence (evaluated last)
+            case "+", "-" -> 5;
+            case "*", "/" -> 6;
             default -> -1;
         };
     }
@@ -156,6 +157,7 @@ public class ExpressionBuilder {
             case ">=" -> new BiggerThanOrEqualExpression(left, right);
             case "=" -> new EqualExpression(left, right);
             case "AND" -> new AndExpression(left, right);
+            case "OR" -> new OrExpression(left, right);
             default -> null;
         };
     }
