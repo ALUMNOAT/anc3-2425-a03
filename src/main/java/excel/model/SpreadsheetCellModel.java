@@ -74,12 +74,14 @@ public class SpreadsheetCellModel {
                 } else if (result instanceof Boolean) {
                     // Handle boolean results
                     this.resultProperty.set(result.toString());
+                } else if (result instanceof String) {
+                    this.resultProperty.set(result.toString());
                 } else {
                     // Handle other cases like error messages or strings
                     this.resultProperty.set(result != null ? result.toString() : "Erreur");
                 }
             } else {
-                this.resultProperty.set("#VALEUR");
+                this.resultProperty.set("#VALUE");
             }
         } else {
             this.resultProperty.set("");
