@@ -108,8 +108,11 @@ public class SpreadsheetModel {
     }
 
     public void updateDependencies(String cell, String formula) {
-        dependencies.put(cell, extractReferences(formula));
+        if (formula != null) { // Vérifiez que la formule n'est pas nulle
+            dependencies.put(cell, extractReferences(formula));
+        }
     }
+
 
     private Set<String> extractReferences(String formula) {
         Set<String> refs = new HashSet<>();

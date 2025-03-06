@@ -34,7 +34,10 @@ public class SpreadsheetCellModel {
 
     public void setValue(String value) {
         this.valueProperty.set(value);
+        spreadsheet.updateDependencies(getCellReference(), value); // Met à jour les dépendances de la cellule
+        setResult(value); // Évalue la nouvelle valeur
     }
+
 
     public int getCol() {
         return col;
