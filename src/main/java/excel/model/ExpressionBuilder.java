@@ -123,12 +123,12 @@ public class ExpressionBuilder {
     }
 
     private boolean isOp(String s) {
-        return s.equals("+") || s.equals("-") || s.equals("*") || s.equals("/") || s.equals(">") || s.equals("<") || s.equals("<=") || s.equals(">=");
+        return s.equals("+") || s.equals("-") || s.equals("*") || s.equals("/") || s.equals(">") || s.equals("<") || s.equals("<=") || s.equals(">=") || s.equals("=");
     }
 
     private int precedence(String op) {
         return switch (op) {
-            case ">", "<", "<=", ">=" -> 1;   // Lower precedence (evaluated last)
+            case ">", "<", "<=", ">=", "=" -> 1;   // Lower precedence (evaluated last)
             case "+", "-" -> 2;
             case "*", "/" -> 3;
             default -> -1;
@@ -145,6 +145,7 @@ public class ExpressionBuilder {
             case "<" -> new LowerThanExpression(left, right);
             case "<=" -> new LessThanOrEqualExpression(left, right);
             case ">=" -> new BiggerThanOrEqualExpression(left, right);
+            case "=" -> new EqualExpression(left, right);
             default -> null;
         };
     }
