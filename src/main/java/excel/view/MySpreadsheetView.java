@@ -105,6 +105,7 @@ public class MySpreadsheetView extends SpreadsheetView {
 
 
                     }
+                    updateCellDisplay();
                     // A SUPPRIMER LE DEBUG PAR LA SUITE
                     System.out.println("DEBUG : change view " + newVal);
                 });

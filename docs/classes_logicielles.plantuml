@@ -67,6 +67,40 @@ package anc3.spreadsheet.model {
 
     SpreadsheetModel *--> SpreadsheetCellModel
 
+    abstract class Expression{
+        Expression()
+    }
+
+    class AdditionExpression{
+        AdditionExpression(\n Expression: left,\n Expression: right\n )
+    }
+
+    class SubstractionExpression{
+        SubstractionExpression(\n Expression: left,\n Expression: right\n )
+    }
+
+    class DivisionExpression{
+        DivisionExpression(\n Expression: left,\n Expression: right\n )
+    }
+
+    class MultiplicationExpression{
+        MultiplicationExpression(\n Expression: left,\n Expression: right\n )
+    }
+
+
+
+    class BinaryExpression{
+            BinaryExpression(\n Expression: left,\n Expression: right\n )
+            }
+
+    class UnaryExpression{
+                UnaryExpression(\n Expression: left,\n Expression: right\n )
+                }
+    class BooleanExpression{
+            BooleanExpression(\n Expression: left,\n Expression: right\n )
+            }
+
+
 }
 
 package anc3.spreadsheet.viewmodel {
