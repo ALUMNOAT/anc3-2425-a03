@@ -64,41 +64,41 @@ public class SpreadsheetCellModel {
      * - Si l'entrée est invalide, la cellule affiche "Erreur".
      * - Si l'entrée est vide ou null, le résultat est réinitialisé à une chaîne vide.
      */
+
     public void setResult(String value) {
-        if (value != null && !value.isEmpty()) {
-            if (!value.startsWith("=")) {
-                this.resultProperty.set(value);
-                return;
-            }
-
-            spreadsheet.updateDependencies(getCellReference(), value);
-
-            ExpressionBuilder interpreter = new ExpressionBuilder(this.spreadsheet);
-            Expression exp = interpreter.build(value);
-
-            if (exp != null) {
-                Object result = exp.interpret(); // Can be a Double, String, etc.
-
-                if (result instanceof Double) {
-                    DecimalFormat df = new DecimalFormat("#.##");
-                    String res = df.format(result).replace(',', '.'); // Ensure decimal point
-                    this.resultProperty.set(res);
-                } else if (result instanceof Boolean) {
-                    // Handle boolean results
-                    this.resultProperty.set(result.toString());
-                } else if (result instanceof String) {
-                    this.resultProperty.set(result.toString());
-                } else {
-                    // Handle other cases like error messages or strings
-                    this.resultProperty.set(result != null ? result.toString() : "Erreur");
-                }
-            } else {
-                this.resultProperty.set("#VALUE");
-            }
-        } else {
+        if (value == null || value.isEmpty()) {
             this.resultProperty.set("");
+            return;
+        }
+
+        if (!value.startsWith("=")) {
+            this.resultProperty.set(value);
+            return;
+        }
+
+        spreadsheet.updateDependencies(getCellReference(), value);
+
+        ExpressionBuilder interpreter = new ExpressionBuilder(this.spreadsheet);
+        Expression exp = interpreter.build(value);
+
+        if (exp != null) {
+            Object result = exp.interpret();
+            this.resultProperty.set(formatResult(result));
+        } else {
+            this.resultProperty.set("#VALUE");
         }
     }
+
+    private String formatResult(Object result) {
+        if (result instanceof Double) {
+            DecimalFormat df = new DecimalFormat("#.##");
+            return df.format(result).replace(',', '.'); // Ensure decimal point
+        } else if (result instanceof Boolean || result instanceof String) {
+            return result.toString();
+        }
+        return result != null ? result.toString() : "Erreur"; // Handle null or unexpected results
+    }
+
 
 
 
