@@ -106,10 +106,10 @@ public class ExpressionBuilder {
                 }
 
                 if (!Character.isWhitespace(c)) {
-                    // Handle multi-character operators (like <=, >=, or, etc.)
+                    // Handle multi-character operators (like <=, >=, !=, or, etc.)
                     if (i + 1 < strExpr.length()) {
                         String twoCharOp = strExpr.substring(i, i + 2);
-                        if (twoCharOp.equals("<=") || twoCharOp.equals(">=") || twoCharOp.equalsIgnoreCase("OR")) {
+                        if (twoCharOp.equals("<=") || twoCharOp.equals(">=") || twoCharOp.equals("!=") || twoCharOp.equalsIgnoreCase("OR")) {
                             tokens.add(twoCharOp);
                             i++; // Skip the next character
                             continue;
@@ -149,7 +149,7 @@ public class ExpressionBuilder {
     }
 
     private boolean isOp(String s) {
-        return s.equals("+") || s.equals("-") || s.equals("*") || s.equals("/") || s.equals(">") || s.equals("<") || s.equals("<=") || s.equals(">=") || s.equals("=") || s.equalsIgnoreCase("AND") || s.equalsIgnoreCase("OR") || s.equalsIgnoreCase("NOT");
+        return s.equals("+") || s.equals("-") || s.equals("*") || s.equals("/") || s.equals(">") || s.equals("<") || s.equals("<=") || s.equals(">=") || s.equals("=") || s.equals("!=") || s.equalsIgnoreCase("AND") || s.equalsIgnoreCase("OR") || s.equalsIgnoreCase("NOT");
     }
 
     private int precedence(String op) {
@@ -157,7 +157,7 @@ public class ExpressionBuilder {
             case "OR" -> 1;
             case "AND" -> 2;
             case "NOT" -> 3;
-            case ">", "<", "<=", ">=", "=" -> 4;   // Lower precedence (evaluated last)
+            case ">", "<", "<=", ">=", "=", "!=" -> 4;
             case "+", "-" -> 5;
             case "*", "/" -> 6;
             default -> -1;
@@ -175,6 +175,7 @@ public class ExpressionBuilder {
             case "<=" -> new LessThanOrEqualExpression(left, right);
             case ">=" -> new BiggerThanOrEqualExpression(left, right);
             case "=" -> new EqualExpression(left, right);
+            case "!=" -> new DifferentThanExpression(left, right);
             case "AND" -> new AndExpression(left, right);
             case "OR" -> new OrExpression(left, right);
             default -> null;
