@@ -18,7 +18,7 @@ public class ReferenceExpression extends Expression {
         try {
             return Double.parseDouble(value);
         } catch (NumberFormatException e) {
-            return "#Valeur"; // Error handling
+            return "#VALEUR"; // Error handling
         }
     }
 }
