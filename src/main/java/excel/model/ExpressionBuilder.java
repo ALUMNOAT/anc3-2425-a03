@@ -35,30 +35,48 @@ public class ExpressionBuilder {
             } else if (isReference(token)) {
                 values.push(new ReferenceExpression(token, spreadsheet));
             } else if (isBoolean(token)) {
-                // Handle boolean literals
                 values.push(new BooleanExpression(Boolean.parseBoolean(token)));
+            } else if (token.equalsIgnoreCase("NOT")) { // Handle NOT
+                operators.push(token);
             } else if (isOp(token)) {
                 // Ensure lower precedence operators are applied later
                 while (!operators.isEmpty() && precedence(operators.peek()) >= precedence(token)) {
-                    if (values.size() < 2) return null; // Prevent Empty Stack Error
-                    Expression right = values.pop();
-                    Expression left = values.pop();
-                    values.push(makeOpExpression(operators.pop(), left, right));
+                    applyOperator(values, operators);
                 }
                 operators.push(token);
             }
         }
 
-        // ⬇️ FIX: Ensure all operators are applied in correct order
+        // Apply any remaining unary NOT operators
+        while (!operators.isEmpty() && operators.peek().equalsIgnoreCase("NOT")) {
+            if (values.isEmpty()) return null; // Prevent Empty Stack Error
+            Expression operand = values.pop();
+            values.push(new NotExpression(operand));
+            operators.pop();
+        }
+
+        // Apply remaining binary operators
         while (!operators.isEmpty()) {
-            if (values.size() < 2) return null; // Prevent Empty Stack Error
-            Expression right = values.pop();
-            Expression left = values.pop();
-            values.push(makeOpExpression(operators.pop(), left, right));
+            applyOperator(values, operators);
         }
 
         return values.isEmpty() ? null : values.pop(); // Ensure not empty
     }
+
+    private void applyOperator(Stack<Expression> values, Stack<String> operators) {
+        String operator = operators.pop();
+        if (operator.equalsIgnoreCase("NOT")) {
+            if (values.isEmpty()) return; // Prevent Empty Stack Error
+            Expression operand = values.pop();
+            values.push(new NotExpression(operand));
+        } else {
+            if (values.size() < 2) return; // Prevent Empty Stack Error
+            Expression right = values.pop();
+            Expression left = values.pop();
+            values.push(makeOpExpression(operator, left, right));
+        }
+    }
+
 
     // Add this method
     private boolean isBoolean(String s) {
@@ -97,9 +115,9 @@ public class ExpressionBuilder {
                             continue;
                         }
                     }
-                    if (i + 2 < strExpr.length()) { // ✅ Handle "AND"
+                    if (i + 2 < strExpr.length()) { // ✅ Handle "AND" and NOT
                         String threeCharOp = strExpr.substring(i, i + 3);
-                        if (threeCharOp.equalsIgnoreCase("AND")) {
+                        if (threeCharOp.equalsIgnoreCase("AND") || threeCharOp.equalsIgnoreCase("NOT")) {
                             tokens.add(threeCharOp); // Convert to uppercase for consistency
                             i += 2; // Skip the next two characters
                             continue;
@@ -131,13 +149,14 @@ public class ExpressionBuilder {
     }
 
     private boolean isOp(String s) {
-        return s.equals("+") || s.equals("-") || s.equals("*") || s.equals("/") || s.equals(">") || s.equals("<") || s.equals("<=") || s.equals(">=") || s.equals("=") || s.equalsIgnoreCase("AND") || s.equalsIgnoreCase("OR");
+        return s.equals("+") || s.equals("-") || s.equals("*") || s.equals("/") || s.equals(">") || s.equals("<") || s.equals("<=") || s.equals(">=") || s.equals("=") || s.equalsIgnoreCase("AND") || s.equalsIgnoreCase("OR") || s.equalsIgnoreCase("NOT");
     }
 
     private int precedence(String op) {
         return switch (op) {
             case "OR" -> 1;
             case "AND" -> 2;
+            case "NOT" -> 3;
             case ">", "<", "<=", ">=", "=" -> 4;   // Lower precedence (evaluated last)
             case "+", "-" -> 5;
             case "*", "/" -> 6;
