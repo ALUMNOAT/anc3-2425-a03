@@ -67,39 +67,75 @@ package anc3.spreadsheet.model {
 
     SpreadsheetModel *--> SpreadsheetCellModel
 
-    abstract class Expression{
-        Expression()
+    class ExpressionBuilder {
+     SpreadsheetModel spreadsheet
+     -Expression build(String strExpr)
+     +Expression buildExpression(List<String> tokens)
     }
 
-    class AdditionExpression{
-        AdditionExpression(\n Expression: left,\n Expression: right\n )
+    ExpressionBuilder --> Expression
+    Expression <|-- ReferenceExpression
+    Expression <|-- BooleanExpression
+    Expression <|-- UnaryExpression
+    Expression <|-- BinaryExpression
+    SpreadsheetCellModel ..>  ExpressionBuilder : <<create>>
+
+    NumberExpression <|-- BinaryExpression
+    LogicUnaryOperator <|-- UnaryExpression
+    LogicBinaryOperator <|-- BinaryExpression
+    ArithmeticOperator <|-- BinaryExpression
+    ComparisonOperator <|-- BinaryExpression
+
+
+    ArithmeticOperator *-- AdditionExpression
+    ArithmeticOperator *-- SubstractionExpression
+    ArithmeticOperator *-- DivisionExpression
+    ArithmeticOperator *-- MultiplicationExpression
+
+
+    LogicUnaryOperator *-- NotExpression
+    LogicBinaryOperator *-- AndExpression
+    LogicBinaryOperator *-- ORExpression
+
+
+    ComparisonOperator *-- BiggerThanOrEqualExpression
+    ComparisonOperator *-- LowerThanOrEqualExpression
+    ComparisonOperator *-- EqualExpression
+    ComparisonOperator *-- DifferentThanExpression
+    ComparisonOperator *-- LowerThanExpression
+    ComparisonOperator *-- GreaterThanExpression
+
+
+
+
+
+
+    abstract class Expression {
+     Expression
+     Object {abstract}interprect()
     }
 
-    class SubstractionExpression{
-        SubstractionExpression(\n Expression: left,\n Expression: right\n )
+    abstract class UnaryExpression {
+     left
     }
 
-    class DivisionExpression{
-        DivisionExpression(\n Expression: left,\n Expression: right\n )
+    abstract class BinaryExpression {
+     left
+     right
     }
 
-    class MultiplicationExpression{
-        MultiplicationExpression(\n Expression: left,\n Expression: right\n )
+    class BooleanExpression {
+     value
     }
 
+    abstract class LogicBinaryOperator
+    abstract class ArithmeticOperator
+    abstract class ComparisonOperator
 
-
-    class BinaryExpression{
-            BinaryExpression(\n Expression: left,\n Expression: right\n )
-            }
-
-    class UnaryExpression{
-                UnaryExpression(\n Expression: left,\n Expression: right\n )
-                }
-    class BooleanExpression{
-            BooleanExpression(\n Expression: left,\n Expression: right\n )
-            }
-
+    class ReferenceExpression {
+     String strExpr
+     SpreadsheetModel spreadsheet;
+    }
 
 }
 
