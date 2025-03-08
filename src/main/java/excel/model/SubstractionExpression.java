@@ -1,6 +1,6 @@
 package excel.model;
 
-public class SubstractionExpression extends BinaryExpression {
+public class SubstractionExpression extends ArithmeticOperator {
 
     public SubstractionExpression(Expression left, Expression right) {
         super(left, right);

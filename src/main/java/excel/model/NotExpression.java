@@ -1,6 +1,6 @@
 package excel.model;
 
-public class NotExpression extends UnaryExpression {
+public class NotExpression extends LogicUnaryOperator {
     public NotExpression(Expression left) {
         super(left);
     }

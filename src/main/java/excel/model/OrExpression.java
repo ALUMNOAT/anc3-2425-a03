@@ -1,6 +1,6 @@
 package excel.model;
 
-public class OrExpression extends BinaryExpression {
+public class OrExpression extends LogicBinaryOperator {
     public OrExpression(Expression left, Expression right) {
         super(left, right);
     }

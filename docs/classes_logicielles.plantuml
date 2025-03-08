@@ -69,11 +69,13 @@ package anc3.spreadsheet.model {
 
     class ExpressionBuilder {
      SpreadsheetModel spreadsheet
-     -Expression build(String strExpr)
-     +Expression buildExpression(List<String> tokens)
+     +Expression build(String strExpr)
+     -Expression buildExpression(List<String> tokens)
+     -List<String> tokenize(String strExpr)
     }
 
     ExpressionBuilder --> Expression
+    Expression <|-- SyntaxErrorExpression
     Expression <|-- ReferenceExpression
     Expression <|-- BooleanExpression
     Expression <|-- UnaryExpression
@@ -113,6 +115,10 @@ package anc3.spreadsheet.model {
     abstract class Expression {
      Expression
      Object {abstract}interprect()
+    }
+
+    class SyntaxErrorExpression {
+     message
     }
 
     abstract class UnaryExpression {

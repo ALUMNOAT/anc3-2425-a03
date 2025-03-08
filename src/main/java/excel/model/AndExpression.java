@@ -1,6 +1,6 @@
 package excel.model;
 
-public class AndExpression extends BinaryExpression {
+public class AndExpression extends LogicBinaryOperator {
 
     public AndExpression(Expression left, Expression right) {
         super(left, right);

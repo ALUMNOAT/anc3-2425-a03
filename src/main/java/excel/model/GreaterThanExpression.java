@@ -1,6 +1,6 @@
 package excel.model;
 
-public class GreaterThanExpression extends BinaryExpression {
+public class GreaterThanExpression extends ComparisonOperator {
 
     public GreaterThanExpression(Expression left, Expression right) {
         super(left, right);
