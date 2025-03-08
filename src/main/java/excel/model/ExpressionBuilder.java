@@ -41,7 +41,9 @@ public class ExpressionBuilder {
             } else if (isOp(token)) {
                 // Ensure lower precedence operators are applied later
                 while (!operators.isEmpty() && precedence(operators.peek()) >= precedence(token)) {
-                    applyOperator(values, operators);
+                    if (!applyOperator(values, operators)) {
+                        return new SyntaxErrorExpression("SYNTAX ERROR");
+                    }
                 }
                 operators.push(token);
             }
@@ -49,12 +51,12 @@ public class ExpressionBuilder {
 
         // Check for trailing operator
         if (!operators.isEmpty() && values.size() < 2) {
-            return null; // Return null for invalid expression
+            return new SyntaxErrorExpression("SYNTAX ERROR"); // Return error for invalid expression
         }
 
         // Apply any remaining unary NOT operators
         while (!operators.isEmpty() && operators.peek().equalsIgnoreCase("NOT")) {
-            if (values.isEmpty()) return null; // Prevent Empty Stack Error
+            if (values.isEmpty()) return new SyntaxErrorExpression("SYNTAX ERROR"); // Prevent Empty Stack Error
             Expression operand = values.pop();
             values.push(new NotExpression(operand));
             operators.pop();
@@ -62,24 +64,43 @@ public class ExpressionBuilder {
 
         // Apply remaining binary operators
         while (!operators.isEmpty()) {
-            applyOperator(values, operators);
+            if (!applyOperator(values, operators)) {
+                return new SyntaxErrorExpression("SYNTAX ERROR");
+            }
         }
 
-        return values.isEmpty() ? null : values.pop(); // Ensure not empty
+        return values.isEmpty() ? new SyntaxErrorExpression("SYNTAX ERROR") : values.pop(); // Ensure not empty
     }
 
-    private void applyOperator(Stack<Expression> values, Stack<String> operators) {
+    private boolean areTypesCompatible(Expression left, Expression right) {
+        if (left instanceof NumberExpression && right instanceof NumberExpression) {
+            return true;
+        }
+        if (left instanceof BooleanExpression && right instanceof BooleanExpression) {
+            return true;
+        }
+        if (left instanceof ReferenceExpression && right instanceof ReferenceExpression) {
+            return true;
+        }
+        return false;
+    }
+
+    private boolean applyOperator(Stack<Expression> values, Stack<String> operators) {
         String operator = operators.pop();
         if (operator.equalsIgnoreCase("NOT")) {
-            if (values.isEmpty()) return; // Prevent Empty Stack Error
+            if (values.isEmpty()) return false; // Prevent Empty Stack Error
             Expression operand = values.pop();
             values.push(new NotExpression(operand));
         } else {
-            if (values.size() < 2) return; // Prevent Empty Stack Error
+            if (values.size() < 2) return false; // Prevent Empty Stack Error
             Expression right = values.pop();
             Expression left = values.pop();
+            if (!areTypesCompatible(left, right)) {
+                return false; // Incompatible types
+            }
             values.push(makeOpExpression(operator, left, right));
         }
+        return true;
     }
 
 
