@@ -94,53 +94,59 @@ public class ExpressionBuilder {
 
 
     private List<String> tokenize(String strExpr) {
+        strExpr = strExpr.replace(',', '.'); // ✅ Corrige les décimaux avec des virgules
+
         List<String> tokens = new ArrayList<>();
         StringBuilder currentToken = new StringBuilder();
+        boolean lastWasNumber = false; // ✅ Gère correctement les nombres décimaux
 
         for (int i = 0; i < strExpr.length(); i++) {
             char c = strExpr.charAt(i);
 
-            // Handle letters or digits (part of variables or numbers)
-            if (Character.isLetterOrDigit(c)) {
+            // ✅ Gère les nombres et variables
+            if (Character.isLetterOrDigit(c) || (c == '.' && lastWasNumber)) {
                 currentToken.append(c);
+                lastWasNumber = true;
             } else {
-                // When we encounter a space or an operator
+                // ✅ Ajoute le dernier token détecté
                 if (currentToken.length() > 0) {
                     tokens.add(currentToken.toString());
                     currentToken.setLength(0);
                 }
+                lastWasNumber = false;
 
                 if (!Character.isWhitespace(c)) {
-                    // Handle multi-character operators (like <=, >=, !=, or, etc.)
+                    // ✅ Gère les opérateurs multi-caractères (<=, >=, !=, OR...)
                     if (i + 1 < strExpr.length()) {
                         String twoCharOp = strExpr.substring(i, i + 2);
                         if (twoCharOp.equals("<=") || twoCharOp.equals(">=") || twoCharOp.equals("!=") || twoCharOp.equalsIgnoreCase("OR")) {
                             tokens.add(twoCharOp);
-                            i++; // Skip the next character
+                            i++; // Skip le prochain caractère
                             continue;
                         }
                     }
-                    if (i + 2 < strExpr.length()) { // ✅ Handle "AND" and NOT
+                    if (i + 2 < strExpr.length()) { // ✅ Gère "AND" et "NOT"
                         String threeCharOp = strExpr.substring(i, i + 3);
                         if (threeCharOp.equalsIgnoreCase("AND") || threeCharOp.equalsIgnoreCase("NOT")) {
-                            tokens.add(threeCharOp); // Convert to uppercase for consistency
-                            i += 2; // Skip the next two characters
+                            tokens.add(threeCharOp);
+                            i += 2; // Skip deux caractères
                             continue;
                         }
                     }
-                    // Add single-character operators
+                    // ✅ Ajoute les opérateurs simples
                     tokens.add(String.valueOf(c));
                 }
             }
         }
 
-        // Add the last token if there's any remaining
+        // ✅ Ajoute le dernier token restant
         if (currentToken.length() > 0) {
             tokens.add(currentToken.toString());
         }
 
         return tokens;
     }
+
 
 
 
