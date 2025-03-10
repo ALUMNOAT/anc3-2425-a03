@@ -85,7 +85,7 @@ public class SpreadsheetCellModel {
             Object result = exp.interpret();
             this.resultProperty.set(formatResult(result));
         } else {
-            this.resultProperty.set("#VALEUR");
+            this.resultProperty.set("SYNTAX_ERROR");
         }
     }
 
