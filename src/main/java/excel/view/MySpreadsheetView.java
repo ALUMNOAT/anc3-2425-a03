@@ -107,19 +107,18 @@ public class MySpreadsheetView extends SpreadsheetView {
                     }
 
                     // A SUPPRIMER LE DEBUG PAR LA SUITE
-                    System.out.println("DEBUG : change view " + newVal);
+//                    System.out.println("DEBUG : change view " + newVal);
                 });
 
                 viewModel.getCellValueProperty(finalRow, finalColumn).addListener((observableValue, oldVal, newVal) -> {
 
                     if (!Objects.equals(oldVal, newVal)) {
-//                        System.out.println("ouh lala changment");
-//                        cell.itemProperty().set(newVal);
                         cell.itemProperty().set(viewModel.getCellResult(finalRow,finalColumn));
                         updateCellDisplay();
                     }
+                    updateCellDisplay();
                     // A SUPPRIMER LE DEBUG PAR LA SUITE
-                    System.out.println("DEBUG : change model " + newVal);
+//                    System.out.println("DEBUG : change model " + newVal);
                 });
 
                 list.add(cell);

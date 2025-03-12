@@ -114,7 +114,7 @@ package anc3.spreadsheet.model {
 
     abstract class Expression {
      Expression
-     Object {abstract}interprect()
+     Object {abstract}interpret()
     }
 
     class SyntaxErrorExpression {

@@ -15,7 +15,7 @@ public class ExpressionBuilder {
         }
         if (strExpr.charAt(0) == '=') {
             List<String> tokens = tokenize(strExpr.substring(1));
-            System.out.println("Tokens: " + tokens); // Debugging
+//            System.out.println("Tokens: " + tokens); // Debugging
             return buildExpression(tokens);
         }
         if (isNumber(strExpr)) {
