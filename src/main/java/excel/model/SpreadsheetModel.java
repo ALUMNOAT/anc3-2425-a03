@@ -113,10 +113,18 @@ public class SpreadsheetModel {
     }
 
     public void updateDependencies(String cell, String formula) {
-        if (formula != null) { // Vérifiez que la formule n'est pas nulle
+        // Remove old dependencies of the cell
+        dependencies.remove(cell);
+
+        // If the formula is valid, extract and store new dependencies
+        if (formula != null && !formula.isEmpty()) {
             dependencies.put(cell, extractReferences(formula));
         }
+
+        // Clean up references that no longer exist
+        dependencies.values().forEach(set -> set.removeIf(ref -> !dependencies.containsKey(ref)));
     }
+
 
 
     private Set<String> extractReferences(String formula) {
