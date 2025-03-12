@@ -20,6 +20,9 @@ public class SubstractionExpression extends ArithmeticOperator {
 
             return leftNum - rightNum;
         }
+        if (getLeft() instanceof ReferenceExpression || getRight() instanceof ReferenceExpression) {
+            return "#VALEUR";
+        }
         return "SYNTAX_ERROR";
     }
 }

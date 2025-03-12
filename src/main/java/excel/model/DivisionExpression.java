@@ -19,6 +19,10 @@ public class DivisionExpression extends ArithmeticOperator {
             }
             return (double) leftValue / denominator;
         }
+
+        if (getLeft() instanceof ReferenceExpression || getRight() instanceof ReferenceExpression) {
+            return "#VALEUR";
+        }
         return "SYNTAX_ERROR"; // Si un des opérandes n'est pas un nombre
     }
 }

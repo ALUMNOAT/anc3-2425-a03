@@ -14,7 +14,9 @@ public class AdditionExpression extends ArithmeticOperator {
         if (leftValue instanceof Double && rightValue instanceof Double) {
             return (double) leftValue + (double) rightValue;
         }
+        if (getLeft() instanceof ReferenceExpression || getRight() instanceof ReferenceExpression) {
+            return "#VALEUR";
+        }
         return "SYNTAX_ERROR";
     }
-
 }

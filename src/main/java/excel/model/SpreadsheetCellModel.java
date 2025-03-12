@@ -98,7 +98,7 @@ public class SpreadsheetCellModel {
         } else if (result instanceof Boolean || result instanceof String) {
             return result.toString();
         }
-        return result != null ? result.toString() : "Erreur"; // Handle null or unexpected results
+        return result != null ? result.toString() : "#Valeur"; // Handle null or unexpected results
     }
 
 
