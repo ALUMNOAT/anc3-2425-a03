@@ -72,9 +72,11 @@ public class SpreadsheetCellModel {
         }
 
         if (!value.startsWith("=")) {
+            value = value.replaceAll("(?<=\\d),(?=\\d)", "."); // ✅ Convertit 5,3 → 5.3
             this.resultProperty.set(value);
             return;
         }
+
 
         spreadsheet.updateDependencies(getCellReference(), value);
 
