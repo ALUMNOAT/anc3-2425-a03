@@ -111,7 +111,7 @@ public class MySpreadsheetView extends SpreadsheetView {
                 });
 
                 viewModel.getCellValueProperty(finalRow, finalColumn).addListener((observableValue, oldVal, newVal) -> {
-
+                        updateCellDisplay();
                     if (!Objects.equals(oldVal, newVal)) {
                         cell.itemProperty().set(viewModel.getCellResult(finalRow,finalColumn));
                         updateCellDisplay();
