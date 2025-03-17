@@ -25,7 +25,7 @@ public class App extends Application {
 
         FXComponentInspectorHandler.handleAll();
 
-        Scene scene = new Scene(root, 652, 332);
+        Scene scene = new Scene(root, 652, 369);
         primaryStage.setTitle("Excel");
         primaryStage.setScene(scene);
         primaryStage.show();
