@@ -1,7 +1,6 @@
 package excel.view;
 
 import excel.viewmodel.SpreadsheetViewModel;
-import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.geometry.Insets;
