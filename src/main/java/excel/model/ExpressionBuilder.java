@@ -35,16 +35,24 @@ public class ExpressionBuilder {
         for (int i = 0; i < tokens.size(); i++) {
             String token = tokens.get(i);
 
-            if (token.equalsIgnoreCase("SUM") && i + 4 < tokens.size()
-                    && tokens.get(i + 1).equals("(") && tokens.get(i + 3).equals(":")
-                    && tokens.get(i + 5).equals(")")) {
+            if (token.equalsIgnoreCase("SUM")) {
+                // Vérifie qu'il y a au moins 6 tokens pour éviter l'IndexOutOfBoundsException
+                if (i + 5 >= tokens.size()) {
+                    values.push(new SumExpression("#SYNTAX_ERROR", spreadsheet));
+                    return new SumExpression("#SYNTAX_ERROR", spreadsheet);
+                }
 
-                String range = tokens.get(i + 2) + ":" + tokens.get(i + 4);
-                System.out.println("Detected SUM inside another expression: " + range);
-
-                values.push(new SumExpression(range, spreadsheet));
-                i += 5; // Skip "SUM ( A1 : B1 )"
+                if (tokens.get(i + 1).equals("(") && tokens.get(i + 3).equals(":") && tokens.get(i + 5).equals(")")) {
+                    String range = tokens.get(i + 2) + ":" + tokens.get(i + 4);
+                    System.out.println("Detected SUM inside another expression: " + range);
+                    values.push(new SumExpression(range, spreadsheet));
+                    i += 5; // Skip "SUM ( A1 : B1 )"
+                } else {
+                    values.push(new SumExpression("#SYNTAX_ERROR", spreadsheet));
+                    return new SumExpression("#SYNTAX_ERROR", spreadsheet);
+                }
             }
+
             else if (isNumber(token)) {
                 values.push(new NumberExpression(Double.parseDouble(token)));
             } else if (isReference(token)) {
