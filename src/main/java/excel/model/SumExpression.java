@@ -1,8 +1,5 @@
 package excel.model;
 
-import java.util.HashSet;
-import java.util.Set;
-
 public class SumExpression extends Expression {
     private final String range;
     private final SpreadsheetModel spreadsheet;
@@ -10,98 +7,66 @@ public class SumExpression extends Expression {
     public SumExpression(String range, SpreadsheetModel spreadsheet) {
         this.range = range;
         this.spreadsheet = spreadsheet;
-        System.out.println("SumExpression created with range: " + this.range);
+        System.out.println("SumExpression created with range: " + range);
     }
 
     @Override
     public Object interpret() {
-        System.out.println("Range: " + range); // DEBUG
+        System.out.println("Interpreting SUM: " + range);
 
-        String[] parts = range.split(":");
-        if (parts.length != 2) return "SYNTAX_ERROR";
+        // Vérification de la syntaxe
+        String[] refs = range.split(":");
+        if (refs.length != 2) return "#SYNTAX_ERROR";
 
-        int[] start = parseCellReference(parts[0]);
-        int[] end = parseCellReference(parts[1]);
+        int[] startCoords = spreadsheet.parseCellReference(refs[0]);
+        int[] endCoords = spreadsheet.parseCellReference(refs[1]);
 
-        if (start == null || end == null || (start[0] > end[0] || start[1] > end[1])) {
-            return "SYNTAX_ERROR";
+        if (startCoords == null || endCoords == null || startCoords[0] > endCoords[0] || startCoords[1] > endCoords[1]) {
+            return "#SYNTAX_ERROR";
         }
 
-        // Vérifier référence circulaire
-        if (spreadsheet.hasCircularReference(parts[0]) || spreadsheet.hasCircularReference(parts[1])) {
-            return "#CIRCULAR_REF";
+        // Vérification de la référence circulaire
+        int[] currentCoords = spreadsheet.parseCellReference(spreadsheet.getSelectedCellReference());
+        if (isCellInRange(currentCoords, startCoords, endCoords)) {
+            System.out.println("Circular reference detected: " + range);
+            return "#CIRCULAR REF";
         }
 
-        double sum = 0;
-        Set<String> visited = new HashSet<>();
-
-        for (int row = start[0]; row <= end[0]; row++) {
-            for (int col = start[1]; col <= end[1]; col++) {
-                String ref = convertToReference(row, col);
-                System.out.println("Processing: " + ref); // DEBUG
-
-                if (!visited.add(ref)) {
-                    System.out.println("Skipping duplicate: " + ref);
-                    continue;
+        // Vérifier si une cellule dans le range est une référence circulaire
+        for (int row = startCoords[0]; row <= endCoords[0]; row++) {
+            for (int col = startCoords[1]; col <= endCoords[1]; col++) {
+                String cellRef = spreadsheet.convertToReference(row, col);
+                if (spreadsheet.hasCircularReference(cellRef)) {
+                    System.out.println("Circular reference inside SUM range: " + cellRef);
+                    return "#CIRCULAR REF";
                 }
-
-                Object value = spreadsheet.getCellValue(ref);
-                System.out.println("Value at " + ref + " = " + value); // DEBUG
-
-                if (value instanceof String && isNumber((String) value)) {
-                    value = Double.parseDouble((String) value);
-                }
-                if (!(value instanceof Double)) return "#VALEUR";
-                sum += (Double) value;
             }
         }
 
+        // Calcul de la somme
+        double sum = 0;
+        for (int row = startCoords[0]; row <= endCoords[0]; row++) {
+            for (int col = startCoords[1]; col <= endCoords[1]; col++) {
+                String cellRef = spreadsheet.convertToReference(row, col);
+                Object cellValue = spreadsheet.getCellValue(cellRef);
+
+                if (!(cellValue instanceof Number)) {
+                    System.out.println("Invalid value in " + cellRef + ": " + cellValue);
+                    return "#VALEUR";
+                }
+
+                sum += ((Number) cellValue).doubleValue();
+            }
+        }
+
+        System.out.println("SUM result: " + sum);
         return sum;
     }
 
-    private boolean isNumber(String s) {
-        try {
-            Double.parseDouble(s);
-            return true;
-        } catch (NumberFormatException e) {
-            return false;
-        }
+    private boolean isCellInRange(int[] cellCoords, int[] start, int[] end) {
+        return cellCoords != null &&
+                cellCoords[0] >= start[0] && cellCoords[0] <= end[0] &&
+                cellCoords[1] >= start[1] && cellCoords[1] <= end[1];
     }
-
-
-    private int[] parseCellReference(String ref) {
-        if (!ref.matches("[A-Z]+[0-9]+")) return null;
-
-        int row = 0, col = 0;
-        int i = 0;
-
-        // 🔹 Lire les lettres (colonne)
-        while (i < ref.length() && Character.isLetter(ref.charAt(i))) {
-            col = col * 26 + (ref.charAt(i) - 'A' + 1); // Correction
-            i++;
-        }
-
-        // 🔹 Lire les chiffres (ligne)
-        while (i < ref.length() && Character.isDigit(ref.charAt(i))) {
-            row = row * 10 + (ref.charAt(i) - '0');
-            i++;
-        }
-
-        return new int[]{row - 1, col - 1}; // Indices commencent à 0
-    }
-
-
-    private String convertToReference(int row, int col) {
-        StringBuilder colName = new StringBuilder();
-        col++; // Excel starts from 1, but our col index starts from 0
-
-        while (col > 0) {
-            col--; // Adjust for 0-based index
-            colName.insert(0, (char) ('A' + col % 26));
-            col /= 26;
-        }
-
-        return colName + String.valueOf(row + 1);
-    }
-
 }
+

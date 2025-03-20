@@ -95,7 +95,7 @@ public class SpreadsheetModel {
 
 
 
-    private int[] parseCellReference(String reference) {
+    int[] parseCellReference(String reference) {
         if (!reference.matches("[A-Z]+[0-9]+")) return null; // Vérifie la syntaxe (ex: "A1")
 
         int column = 0;
@@ -159,10 +159,28 @@ public class SpreadsheetModel {
         return detectCycle(cellReference, new HashSet<>());
     }
 
+    String convertToReference(int row, int col) {
+        StringBuilder colName = new StringBuilder();
+        col++;
 
+        while (col > 0) {
+            col--;
+            colName.insert(0, (char) ('A' + col % 26));
+            col /= 26;
+        }
 
+        return colName.toString() + (row + 1);
 
+    }
 
+    public String getSelectedCellReference() {
+        SpreadsheetCellModel selected = selectedCell.get();
+        if (selected == null) return null;
+
+        int row = selected.getRow();
+        int col = selected.getCol();
+        return convertToReference(row, col);
+    }
 
 
 }
