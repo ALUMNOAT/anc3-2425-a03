@@ -29,23 +29,38 @@ public class ExpressionBuilder {
         Stack<Expression> values = new Stack<>();
         Stack<String> operators = new Stack<>();
 
-        for (String token : tokens) {
-            if (isNumber(token)) {
+        System.out.println("Tokens: " + tokens);
+
+
+        for (int i = 0; i < tokens.size(); i++) {
+            String token = tokens.get(i);
+
+            if (token.equalsIgnoreCase("SUM") && i + 4 < tokens.size()
+                    && tokens.get(i + 1).equals("(") && tokens.get(i + 3).equals(":")
+                    && tokens.get(i + 5).equals(")")) {
+
+                String range = tokens.get(i + 2) + ":" + tokens.get(i + 4);
+                System.out.println("Detected SUM inside another expression: " + range);
+
+                values.push(new SumExpression(range, spreadsheet));
+                i += 5; // Skip "SUM ( A1 : B1 )"
+            }
+            else if (isNumber(token)) {
                 values.push(new NumberExpression(Double.parseDouble(token)));
             } else if (isReference(token)) {
                 values.push(new ReferenceExpression(token, spreadsheet));
             } else if (isBoolean(token)) {
                 values.push(new BooleanExpression(Boolean.parseBoolean(token)));
-            } else if (token.equalsIgnoreCase("NOT")) { // Handle NOT
+            } else if (token.equalsIgnoreCase("NOT")) {
                 operators.push(token);
             } else if (isOp(token)) {
-                // Ensure lower precedence operators are applied later
                 while (!operators.isEmpty() && precedence(operators.peek()) >= precedence(token)) {
                     applyOperator(values, operators);
                 }
                 operators.push(token);
             }
         }
+
 
         // Check for trailing operator
         if (!operators.isEmpty() && values.size() < 2) {
