@@ -31,7 +31,6 @@ public class ExpressionBuilder {
 
         System.out.println("Tokens: " + tokens);
 
-
         for (int i = 0; i < tokens.size(); i++) {
             String token = tokens.get(i);
 
@@ -51,9 +50,7 @@ public class ExpressionBuilder {
                     values.push(new SumExpression("#SYNTAX_ERROR", spreadsheet));
                     return new SumExpression("#SYNTAX_ERROR", spreadsheet);
                 }
-            }
-
-            else if (isNumber(token)) {
+            } else if (isNumber(token)) {
                 values.push(new NumberExpression(Double.parseDouble(token)));
             } else if (isReference(token)) {
                 values.push(new ReferenceExpression(token, spreadsheet));
@@ -62,34 +59,29 @@ public class ExpressionBuilder {
             } else if (token.equalsIgnoreCase("NOT")) {
                 operators.push(token);
             } else if (isOp(token)) {
+                // Apply previous operators with higher or equal precedence
                 while (!operators.isEmpty() && precedence(operators.peek()) >= precedence(token)) {
+                    if (values.size() < 2) {
+                        return null; // Indicates SYNTAX_ERROR
+                    }
                     applyOperator(values, operators);
                 }
                 operators.push(token);
             }
         }
 
-
-        // Check for trailing operator
-        if (!operators.isEmpty() && values.size() < 2) {
-            return null; // Return null for invalid expression
-        }
-
-        // Apply any remaining unary NOT operators
-        while (!operators.isEmpty() && operators.peek().equalsIgnoreCase("NOT")) {
-            if (values.isEmpty()) return null; // Prevent Empty Stack Error
-            Expression operand = values.pop();
-            values.push(new NotExpression(operand));
-            operators.pop();
-        }
-
-        // Apply remaining binary operators
+        // Check for any remaining operators at the end
         while (!operators.isEmpty()) {
+            if (values.size() < 2) {
+                return null; // Indicates SYNTAX_ERROR
+            }
             applyOperator(values, operators);
         }
 
-        return values.isEmpty() ? null : values.pop(); // Ensure not empty
+        return values.isEmpty() ? null : values.pop(); // Return final result or null for SYNTAX_ERROR
     }
+
+
 
     private void applyOperator(Stack<Expression> values, Stack<String> operators) {
         String operator = operators.pop();
@@ -104,6 +96,7 @@ public class ExpressionBuilder {
             values.push(makeOpExpression(operator, left, right));
         }
     }
+
 
 
     // Add this method
