@@ -51,7 +51,7 @@ public class MySpreadsheetView extends SpreadsheetView {
                 SpreadsheetCell spreadsheetCell = grid.getRows().get(row).get(col);
                 spreadsheetCell.itemProperty().set(viewModel.getCellValue(row, col));
             } else { // permet de refresh les différentes cases (repasser en result ou pour les références en cas de changement)
-//                updateCellDisplay();
+                updateCellDisplay();
             }
         });
 
