@@ -3,6 +3,7 @@ package excel.model;
 import excel.viewmodel.SpreadsheetCellViewModel;
 import javafx.beans.Observable;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -180,6 +181,21 @@ public class SpreadsheetModel {
         int row = selected.getRow();
         int col = selected.getCol();
         return convertToReference(row, col);
+    }
+
+    public void undo(){
+        CommandManager.getInstance().undo();
+    }
+
+    public void redo(){
+        CommandManager.getInstance().redo();
+    }
+
+    public ReadOnlyBooleanProperty canRedo(){
+        return CommandManager.getInstance().canRedoProperty();
+    }
+    public ReadOnlyBooleanProperty canUndo(){
+        return CommandManager.getInstance().canUndoProperty();
     }
 
 

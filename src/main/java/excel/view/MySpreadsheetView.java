@@ -51,7 +51,7 @@ public class MySpreadsheetView extends SpreadsheetView {
                 SpreadsheetCell spreadsheetCell = grid.getRows().get(row).get(col);
                 spreadsheetCell.itemProperty().set(viewModel.getCellValue(row, col));
             } else { // permet de refresh les différentes cases (repasser en result ou pour les références en cas de changement)
-                updateCellDisplay();
+//                updateCellDisplay();
             }
         });
 
@@ -102,7 +102,7 @@ public class MySpreadsheetView extends SpreadsheetView {
                         viewModel.setCellValue(finalRow, finalColumn, (String) newVal);
 //                        System.out.println("après Value -> value : " + viewModel.getCellValue(finalRow,finalColumn)+ ", result : " + viewModel.getCellResult(finalRow,finalColumn));
                         cell.itemProperty().set(viewModel.getCellResult(finalRow,finalColumn));
-                        updateCellDisplay();
+//                        updateCellDisplay();
 
                     }
 
@@ -111,12 +111,12 @@ public class MySpreadsheetView extends SpreadsheetView {
                 });
 
                 viewModel.getCellValueProperty(finalRow, finalColumn).addListener((observableValue, oldVal, newVal) -> {
-                        updateCellDisplay();
+//                        updateCellDisplay();
                     if (!Objects.equals(oldVal, newVal)) {
                         cell.itemProperty().set(viewModel.getCellResult(finalRow,finalColumn));
-                        updateCellDisplay();
+//                        updateCellDisplay();
                     }
-                    updateCellDisplay();
+//                    updateCellDisplay();
                     // A SUPPRIMER LE DEBUG PAR LA SUITE
 //                    System.out.println("DEBUG : change model " + newVal);
                 });

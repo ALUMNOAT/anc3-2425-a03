@@ -1,6 +1,7 @@
 package excel.view;
 
 import excel.viewmodel.SpreadsheetViewModel;
+import javafx.beans.binding.Bindings;
 import javafx.geometry.Insets;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
@@ -51,6 +52,22 @@ public class MenuView extends HBox {
 
         // Ajout de l'écouteur d'événements pour l'élément de menu "Save"
         saveItem.setOnAction(event -> save());
+
+        undoItem.setOnAction(event -> undo());
+
+        redoItem.setOnAction(event -> redo());
+
+        // disable le bouton redo/undo s'il n'est pas possible de l'utiliser
+        redoItem.disableProperty().bind(viewModel.canRedo().not());
+        undoItem.disableProperty().bind(viewModel.canUndo().not());
+    }
+
+    private void undo(){
+        viewModel.undo();
+    }
+
+    private void redo(){
+        viewModel.redo();
     }
 
     private void open() {

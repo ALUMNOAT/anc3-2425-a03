@@ -68,6 +68,21 @@ public class SpreadsheetViewModel {
         return model.selectedCellProperty().get().getCol();
     }
 
+    public void undo (){
+        model.undo();
+    }
+
+    public void redo(){
+        model.redo();
+    }
+
+    public ReadOnlyBooleanProperty canRedo(){
+        return model.canRedo();
+    }
+    public ReadOnlyBooleanProperty canUndo(){
+        return model.canUndo();
+    }
+
 
 
 
