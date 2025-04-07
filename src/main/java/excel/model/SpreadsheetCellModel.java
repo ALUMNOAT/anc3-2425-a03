@@ -4,11 +4,15 @@ import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class SpreadsheetCellModel {
     private final SimpleObjectProperty<String> valueProperty = new SimpleObjectProperty<>();
     private final SimpleObjectProperty<String> resultProperty = new SimpleObjectProperty<>();
+    // changer en liste de Listener ? + Ajout d'un remove all de la liste en début de setResult ? (pour effacer les refs supprimées)
+    private final List<SpreadsheetCellModel> referencing = new ArrayList<>();
     private final int row;
     private  final int col;
     private final SpreadsheetModel spreadsheet;
@@ -51,6 +55,12 @@ public class SpreadsheetCellModel {
         this.valueProperty.set(value);
     }
 
+//    public void addRef(String ref){
+//        // changer en liste de Listener sur le valueProperty ? + Ajout d'un remove all de la liste en début de setResult ? (pour effacer les refs supprimées)
+//        referencing.add(ref);
+//
+//    }
+
 
     public int getCol() {
         return col;
@@ -66,6 +76,7 @@ public class SpreadsheetCellModel {
         int rowIndex = row + 1; // Convert zero-based index to one-based
         return String.valueOf(columnLetter) + rowIndex; // Combine to form "A1", "B2", etc.
     }
+
 
 
     /**
@@ -93,7 +104,7 @@ public class SpreadsheetCellModel {
 
         spreadsheet.updateDependencies(getCellReference(), value);
 
-        ExpressionBuilder interpreter = new ExpressionBuilder(this.spreadsheet);
+        ExpressionBuilder interpreter = new ExpressionBuilder(this.spreadsheet, this.col, this.row);
         Expression exp = interpreter.build(value);
 
         if (exp != null) {

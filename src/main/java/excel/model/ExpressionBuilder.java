@@ -1,12 +1,15 @@
 package excel.model;
 
 import java.util.*;
+import excel.model.SpreadsheetCellModel;
 
 public class ExpressionBuilder {
     private final SpreadsheetModel spreadsheet;
+    private final SpreadsheetCellModel cell;
 
-    public ExpressionBuilder(SpreadsheetModel spreadsheet) {
+    public ExpressionBuilder(SpreadsheetModel spreadsheet, int col , int row) {
         this.spreadsheet = spreadsheet;
+        this.cell = spreadsheet.getCell(row,col);
     }
 
     public Expression build(String strExpr) {
@@ -53,6 +56,7 @@ public class ExpressionBuilder {
             } else if (isNumber(token)) {
                 values.push(new NumberExpression(Double.parseDouble(token)));
             } else if (isReference(token)) {
+//                cell.addRef(token);
                 values.push(new ReferenceExpression(token, spreadsheet));
             } else if (isBoolean(token)) {
                 values.push(new BooleanExpression(Boolean.parseBoolean(token)));

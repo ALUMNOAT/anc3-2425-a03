@@ -51,7 +51,11 @@ public class MySpreadsheetView extends SpreadsheetView {
                 SpreadsheetCell spreadsheetCell = grid.getRows().get(row).get(col);
                 spreadsheetCell.itemProperty().set(viewModel.getCellValue(row, col));
             } else { // permet de refresh les différentes cases (repasser en result ou pour les références en cas de changement)
-                updateCellDisplay();
+//                updateCellDisplay();
+                int row = viewModel.getSelectedCellRow();
+                int col = viewModel.getSelectedCellColumn();
+                SpreadsheetCell spreadsheetCell = grid.getRows().get(row).get(col);
+                spreadsheetCell.itemProperty().set(viewModel.getCellResult(row,col));
             }
         });
 
@@ -67,17 +71,17 @@ public class MySpreadsheetView extends SpreadsheetView {
         });
     }
 
-    private void updateCellDisplay() {
-        for (int row = 0; row < grid.getRowCount(); row++) {
-            for (int col = 0; col < grid.getColumnCount(); col++) {
-                SpreadsheetCell cell = grid.getRows().get(row).get(col);
-                String cellValue = viewModel.getCellValue(row,col);
-                viewModel.setCellValue(row,col,cellValue);
-                viewModel.setCellResult(row,col,cellValue);
-                cell.itemProperty().set(viewModel.getCellResult(row, col));
-            }
-        }
-    }
+//    private void updateCellDisplay() {
+//        for (int row = 0; row < grid.getRowCount(); row++) {
+//            for (int col = 0; col < grid.getColumnCount(); col++) {
+//                SpreadsheetCell cell = grid.getRows().get(row).get(col);
+//                String cellValue = viewModel.getCellValue(row,col);
+//                viewModel.setCellValue(row,col,cellValue);
+//                viewModel.setCellResult(row,col,cellValue);
+//                cell.itemProperty().set(viewModel.getCellResult(row, col));
+//            }
+//        }
+//    }
 
     private GridBase createGridAndBindings() {
         GridBase grid = new GridBase(viewModel.getRowCount(), viewModel.getColumnCount());
