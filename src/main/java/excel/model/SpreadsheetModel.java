@@ -13,8 +13,8 @@ import java.util.stream.IntStream;
 
 
 public class SpreadsheetModel {
-    private final int rows;
-    private final int cols;
+    private int rows;
+    private int cols;
     private final ObjectProperty<SpreadsheetCellModel> selectedCell = new SimpleObjectProperty<>();
     private final ObservableList<ObservableList<SpreadsheetCellModel>> data = FXCollections.observableArrayList(
             item -> new Observable[]{});
@@ -42,6 +42,15 @@ public class SpreadsheetModel {
     public int getColumnCount() {
         return this.cols;
     }
+
+    public int setRows(int rows) {
+        return this.rows = rows;
+    }
+
+    public int setCols(int cols) {
+        return this.cols = cols;
+    }
+
 
     public SpreadsheetCellModel getCell(int line, int column) {
         return data.get(line).get(column);
