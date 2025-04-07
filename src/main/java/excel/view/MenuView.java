@@ -45,7 +45,6 @@ public class MenuView extends HBox {
         HBox.setHgrow(menuBar, Priority.ALWAYS);
         this.getChildren().add(menuBar);
 
-
         // Ajout de l'écouteur d'événements pour l'élément de menu "Open"
         openItem.setOnAction(event -> open());
 
