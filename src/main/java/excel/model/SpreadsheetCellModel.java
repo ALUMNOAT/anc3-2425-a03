@@ -4,6 +4,7 @@ import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 
 import java.text.DecimalFormat;
+import java.util.Objects;
 
 public class SpreadsheetCellModel {
     private final SimpleObjectProperty<String> valueProperty = new SimpleObjectProperty<>();
@@ -32,10 +33,22 @@ public class SpreadsheetCellModel {
         return resultProperty.get();
     }
 
-    public void setValue(String value) {
-        this.valueProperty.set(value);
+
+    // ajoute dans le stack si la valeur est différente de l'ancienne
+    public void addValue(String value) {
+        // évite d'ajouter dans le stack un changement inexistant ou si l'on a une des deux valeurs (oldValue et newValue) à null et l'autre à ""
+        if (Objects.equals(this.getValue(),value) || (this.getValue() == null && Objects.equals(value, "")) || (Objects.equals(this.getValue(), "") && Objects.equals(value, null))){
+            return;
+        }
+        CommandManager.getInstance().execute(new SetValueOperation(this, value));
         spreadsheet.updateDependencies(getCellReference(), value); // Met à jour les dépendances de la cellule
-        setResult(value); // Évalue la nouvelle valeur
+    }
+
+    // Applique la valeur au valueProperty
+    public void setValue(String value){
+        setResult(value);
+        System.out.println("value = " + value);
+        this.valueProperty.set(value);
     }
 
 

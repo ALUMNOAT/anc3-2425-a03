@@ -29,7 +29,7 @@ public class SpreadsheetCellViewModel {
     }
 
     public void setCellValue(String value) {
-        model.setValue(value);
+        model.addValue(value);
     }
 
     public void setCellResult(String value) {

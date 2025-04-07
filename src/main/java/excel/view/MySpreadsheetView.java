@@ -102,7 +102,7 @@ public class MySpreadsheetView extends SpreadsheetView {
                         viewModel.setCellValue(finalRow, finalColumn, (String) newVal);
 //                        System.out.println("après Value -> value : " + viewModel.getCellValue(finalRow,finalColumn)+ ", result : " + viewModel.getCellResult(finalRow,finalColumn));
                         cell.itemProperty().set(viewModel.getCellResult(finalRow,finalColumn));
-                        updateCellDisplay();
+//                        updateCellDisplay();
 
                     }
 
@@ -111,12 +111,12 @@ public class MySpreadsheetView extends SpreadsheetView {
                 });
 
                 viewModel.getCellValueProperty(finalRow, finalColumn).addListener((observableValue, oldVal, newVal) -> {
-                        updateCellDisplay();
+//                        updateCellDisplay();
                     if (!Objects.equals(oldVal, newVal)) {
                         cell.itemProperty().set(viewModel.getCellResult(finalRow,finalColumn));
-                        updateCellDisplay();
+//                        updateCellDisplay();
                     }
-                    updateCellDisplay();
+//                    updateCellDisplay();
                     // A SUPPRIMER LE DEBUG PAR LA SUITE
 //                    System.out.println("DEBUG : change model " + newVal);
                 });
