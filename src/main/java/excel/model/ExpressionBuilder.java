@@ -1,7 +1,6 @@
 package excel.model;
 
 import java.util.*;
-import excel.model.SpreadsheetCellModel;
 
 public class ExpressionBuilder {
     private final SpreadsheetModel spreadsheet;
@@ -40,23 +39,23 @@ public class ExpressionBuilder {
             if (token.equalsIgnoreCase("SUM")) {
                 // Vérifie qu'il y a au moins 6 tokens pour éviter l'IndexOutOfBoundsException
                 if (i + 5 >= tokens.size()) {
-                    values.push(new SumExpression("#SYNTAX_ERROR", spreadsheet));
-                    return new SumExpression("#SYNTAX_ERROR", spreadsheet);
+                    values.push(new SumExpression("#SYNTAX_ERROR", spreadsheet,cell));
+                    return new SumExpression("#SYNTAX_ERROR", spreadsheet,cell);
                 }
 
                 if (tokens.get(i + 1).equals("(") && tokens.get(i + 3).equals(":") && tokens.get(i + 5).equals(")")) {
                     String range = tokens.get(i + 2) + ":" + tokens.get(i + 4);
                     System.out.println("Detected SUM inside another expression: " + range);
-                    values.push(new SumExpression(range, spreadsheet));
+                    values.push(new SumExpression(range, spreadsheet,cell));
                     i += 5; // Skip "SUM ( A1 : B1 )"
                 } else {
-                    values.push(new SumExpression("#SYNTAX_ERROR", spreadsheet));
-                    return new SumExpression("#SYNTAX_ERROR", spreadsheet);
+                    values.push(new SumExpression("#SYNTAX_ERROR", spreadsheet,cell));
+                    return new SumExpression("#SYNTAX_ERROR", spreadsheet,cell);
                 }
             } else if (isNumber(token)) {
                 values.push(new NumberExpression(Double.parseDouble(token)));
             } else if (isReference(token)) {
-//                cell.addRef(token);
+                cell.addRef(token);
                 values.push(new ReferenceExpression(token, spreadsheet));
             } else if (isBoolean(token)) {
                 values.push(new BooleanExpression(Boolean.parseBoolean(token)));

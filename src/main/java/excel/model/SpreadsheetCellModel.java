@@ -2,6 +2,7 @@ package excel.model;
 
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -11,8 +12,7 @@ import java.util.Objects;
 public class SpreadsheetCellModel {
     private final SimpleObjectProperty<String> valueProperty = new SimpleObjectProperty<>();
     private final SimpleObjectProperty<String> resultProperty = new SimpleObjectProperty<>();
-    // changer en liste de Listener ? + Ajout d'un remove all de la liste en début de setResult ? (pour effacer les refs supprimées)
-    private final List<SpreadsheetCellModel> referencing = new ArrayList<>();
+    private final List<ChangeListener<String>> referencing = new ArrayList<>();
     private final int row;
     private  final int col;
     private final SpreadsheetModel spreadsheet;
@@ -55,11 +55,29 @@ public class SpreadsheetCellModel {
         this.valueProperty.set(value);
     }
 
-//    public void addRef(String ref){
-//        // changer en liste de Listener sur le valueProperty ? + Ajout d'un remove all de la liste en début de setResult ? (pour effacer les refs supprimées)
-//        referencing.add(ref);
-//
-//    }
+    public void addRef(String ref) {
+        // Convertir la référence en indices
+        int col = ref.charAt(0) - 'A'; // A -> 0, B -> 1 ...
+        int row = Integer.parseInt(ref.substring(1)) - 1;
+
+        // Récupérer la cellule référencée
+        SpreadsheetCellModel referencedCell = spreadsheet.getCell(row, col);
+
+        ChangeListener<String> listener = (obs, oldVal, newVal) -> {
+            // Met à jour la valeur de la cellule actuelle lorsque la cellule référencée change
+            if (!Objects.equals(oldVal, newVal)) {
+                setResult(getValue());
+            }
+        };
+
+        // créer un listener à resultProperty de la cellule référencée
+        referencedCell.resultProperty().addListener(listener);
+
+        // Ajoute le listener à la liste des listeners
+        if (!referencing.contains(listener)) {
+            referencing.add(listener);
+        }
+    }
 
 
     public int getCol() {
@@ -69,7 +87,6 @@ public class SpreadsheetCellModel {
     public int getRow() {
         return row;
     }
-    //POTENTIELLEMENT AJOUTER LE CALCUL ICI ??
 
     public String getCellReference() {
         char columnLetter = (char) ('A' + col); // Convert column index to letter
@@ -90,6 +107,9 @@ public class SpreadsheetCellModel {
      */
 
     public void setResult(String value) {
+        // supprime elem liste Listener car rajouté derrière (permet d'enlever les Listener dont on ne veut plus)
+        referencing.clear();
+
         if (value == null || value.isEmpty()) {
             this.resultProperty.set("");
             return;
@@ -100,7 +120,6 @@ public class SpreadsheetCellModel {
             this.resultProperty.set(value);
             return;
         }
-
 
         spreadsheet.updateDependencies(getCellReference(), value);
 
@@ -124,11 +143,4 @@ public class SpreadsheetCellModel {
         }
         return result != null ? result.toString() : "#Valeur"; // Handle null or unexpected results
     }
-
-
-
-
-
-
-
 }

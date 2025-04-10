@@ -95,7 +95,12 @@ public class MySpreadsheetView extends SpreadsheetView {
                 int finalRow = row;
                 int finalColumn = column;
 
-
+                // pour les refs (change que leur result et non leur value donc nécessaire)
+                viewModel.getCellResultProperty(finalRow, finalColumn).addListener((observable, oldVal, newVal) -> {
+                    if (!Objects.equals(oldVal, newVal)) {
+                        cell.itemProperty().set(newVal);
+                    }
+                });
                 // Synchronisation entre le modèle et la vue
                 cell.itemProperty().addListener((observableValue, oldVal, newVal) -> {
                     if (!Objects.equals(oldVal, newVal) && viewModel.getCellResult(finalRow,finalColumn)!= newVal && viewModel.getCellValue(finalRow,finalColumn) != newVal) { // si la valeur a changé et que le résultat est différent de la nouvelle valeur (pour éviter double passage)

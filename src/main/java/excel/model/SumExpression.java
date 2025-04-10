@@ -3,10 +3,12 @@ package excel.model;
 public class SumExpression extends Expression {
     private final String range;
     private final SpreadsheetModel spreadsheet;
+    private final SpreadsheetCellModel currentCell;
 
-    public SumExpression(String range, SpreadsheetModel spreadsheet) {
+    public SumExpression(String range, SpreadsheetModel spreadsheet, SpreadsheetCellModel currentCell) {
         this.range = range;
         this.spreadsheet = spreadsheet;
+        this.currentCell = currentCell;
         System.out.println("SumExpression created with range: " + range);
     }
 
@@ -26,7 +28,7 @@ public class SumExpression extends Expression {
         }
 
         // Vérification de la référence circulaire
-        int[] currentCoords = spreadsheet.parseCellReference(spreadsheet.getSelectedCellReference());
+        int[] currentCoords = {currentCell.getRow(),currentCell.getCol()};
         if (isCellInRange(currentCoords, startCoords, endCoords)) {
             System.out.println("Circular reference detected: " + range);
             return "#CIRCULAR REF";
@@ -48,6 +50,7 @@ public class SumExpression extends Expression {
         for (int row = startCoords[0]; row <= endCoords[0]; row++) {
             for (int col = startCoords[1]; col <= endCoords[1]; col++) {
                 String cellRef = spreadsheet.convertToReference(row, col);
+                currentCell.addRef(cellRef);
                 Object cellValue = spreadsheet.getCellValue(cellRef);
 
                 if (!(cellValue instanceof Number)) {
