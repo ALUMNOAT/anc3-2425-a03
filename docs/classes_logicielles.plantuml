@@ -45,9 +45,14 @@ package anc3.spreadsheet.view {
         MySpreadsheetView(SpreadsheetViewModel)
     }
 
+    class HeaderView{
+        HeaderView(SpreadsheetViewModel)
+    }
+
 
 
     MainView ..> MySpreadsheetView : <<create>>
+    MainView ..> HeaderView : <<create>>
 
 }
 
@@ -61,6 +66,82 @@ package anc3.spreadsheet.model {
     }
 
     SpreadsheetModel *--> SpreadsheetCellModel
+
+    class ExpressionBuilder {
+     SpreadsheetModel spreadsheet
+     +Expression build(String strExpr)
+     -Expression buildExpression(List<String> tokens)
+     -List<String> tokenize(String strExpr)
+    }
+
+    ExpressionBuilder --> Expression
+    Expression <|-- SyntaxErrorExpression
+    Expression <|-- ReferenceExpression
+    Expression <|-- BooleanExpression
+    Expression <|-- UnaryExpression
+    Expression <|-- BinaryExpression
+    SpreadsheetCellModel ..>  ExpressionBuilder : <<create>>
+
+    NumberExpression <|-- BinaryExpression
+    LogicUnaryOperator <|-- UnaryExpression
+    LogicBinaryOperator <|-- BinaryExpression
+    ArithmeticOperator <|-- BinaryExpression
+    ComparisonOperator <|-- BinaryExpression
+
+
+    ArithmeticOperator *-- AdditionExpression
+    ArithmeticOperator *-- SubstractionExpression
+    ArithmeticOperator *-- DivisionExpression
+    ArithmeticOperator *-- MultiplicationExpression
+
+
+    LogicUnaryOperator *-- NotExpression
+    LogicBinaryOperator *-- AndExpression
+    LogicBinaryOperator *-- ORExpression
+
+
+    ComparisonOperator *-- BiggerThanOrEqualExpression
+    ComparisonOperator *-- LowerThanOrEqualExpression
+    ComparisonOperator *-- EqualExpression
+    ComparisonOperator *-- DifferentThanExpression
+    ComparisonOperator *-- LowerThanExpression
+    ComparisonOperator *-- GreaterThanExpression
+
+
+
+
+
+
+    abstract class Expression {
+     Expression
+     Object {abstract}interpret()
+    }
+
+    class SyntaxErrorExpression {
+     message
+    }
+
+    abstract class UnaryExpression {
+     left
+    }
+
+    abstract class BinaryExpression {
+     left
+     right
+    }
+
+    class BooleanExpression {
+     value
+    }
+
+    abstract class LogicBinaryOperator
+    abstract class ArithmeticOperator
+    abstract class ComparisonOperator
+
+    class ReferenceExpression {
+     String strExpr
+     SpreadsheetModel spreadsheet;
+    }
 
 }
 
@@ -84,6 +165,7 @@ package anc3.spreadsheet.viewmodel {
 
 BorderPane <|-- MainView
 SpreadsheetView <|-- MySpreadsheetView
+HBox <|-- HeaderView
 
 App ..> SpreadsheetModel : <<create>>
 App ..> SpreadsheetViewModel : <<create>>
@@ -93,6 +175,7 @@ SpreadsheetViewModel ..> SpreadsheetCellViewModel : <<create>>
 SpreadsheetModel ..> SpreadsheetCellModel : <<create>>
 
 MySpreadsheetView *-->  SpreadsheetViewModel
+HeaderView *--> SpreadsheetViewModel
 
 SpreadsheetViewModel *-->  SpreadsheetModel
 SpreadsheetCellViewModel *-->  SpreadsheetCellModel
