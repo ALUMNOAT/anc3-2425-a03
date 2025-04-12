@@ -1,0 +1,35 @@
+@startuml
+actor Utilisateur
+participant UIController
+participant CommandManager
+participant SetValueOperation
+participant SpreadsheetModel
+
+== Exécution d'une commande ==
+
+Utilisateur -> UIController : Entre "42" dans la cellule
+UIController -> CommandManager : new SetValueOperation(cell, "42")
+CommandManager -> SetValueOperation : constructeur()
+UIController -> CommandManager : execute(command)
+CommandManager -> SetValueOperation : execute()
+SetValueOperation -> SpreadsheetModel : setValue("42")
+CommandManager -> CommandManager : push dans undoStack
+CommandManager -> CommandManager : clear redoStack
+
+== Undo ==
+
+Utilisateur -> UIController : Clic "Undo"
+UIController -> CommandManager : undo()
+CommandManager -> SetValueOperation : undo()
+SetValueOperation -> SpreadsheetModel : setValue(oldValue)
+CommandManager -> CommandManager : push dans redoStack
+
+== Redo ==
+
+Utilisateur -> UIController : Clic "Redo"
+UIController -> CommandManager : redo()
+CommandManager -> SetValueOperation : execute()
+SetValueOperation -> SpreadsheetModel : setValue("42")
+CommandManager -> CommandManager : push dans undoStack
+
+@enduml
