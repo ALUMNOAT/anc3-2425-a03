@@ -121,6 +121,14 @@ public class SpreadsheetCellModel {
             return;
         }
 
+        // si se référence elle même
+        String currentRef = getCellReference();
+        spreadsheet.updateDependencies(currentRef, value);
+        if (spreadsheet.hasCircularReference(currentRef)) {
+            this.resultProperty.set("#CIRCULAR REF");
+            return;
+        }
+
         spreadsheet.updateDependencies(getCellReference(), value);
 
         ExpressionBuilder interpreter = new ExpressionBuilder(this.spreadsheet, this.col, this.row);
