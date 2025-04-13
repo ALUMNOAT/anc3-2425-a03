@@ -4,6 +4,11 @@ import excel.model.SpreadsheetCellModel;
 import excel.model.SpreadsheetModel;
 import javafx.beans.property.*;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+
 public class SpreadsheetViewModel {
     private final SpreadsheetModel model;
     private final SimpleBooleanProperty editableProperty = new SimpleBooleanProperty(true);
@@ -48,6 +53,34 @@ public class SpreadsheetViewModel {
         getCellViewModel(line,column).setCellResult(value);
     }
 
+    public void setDimensions(int rows, int cols) {
+        model.setRows(rows);
+        model.setCols(cols);
+    }
+
+    public void open(File file) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            String line = reader.readLine();
+            if (line != null) {
+                String[] dimensions = line.split(",");
+                int rows = Integer.parseInt(dimensions[0]);
+                int cols = Integer.parseInt(dimensions[1]);
+                setDimensions(rows, cols);
+
+                while ((line = reader.readLine()) != null) {
+                    String[] parts = line.split(";");
+                    String[] position = parts[0].split(",");
+                    int row = Integer.parseInt(position[0]);
+                    int col = Integer.parseInt(position[1]);
+                    String value = parts[1];
+                    setCellValue(row, col, value);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public ObjectProperty<SpreadsheetCellModel> selectedCellProperty() { //cellule selectionnée
         return model.selectedCellProperty();
     }
@@ -82,8 +115,6 @@ public class SpreadsheetViewModel {
     public ReadOnlyBooleanProperty canUndo(){
         return model.canUndo();
     }
-
-
 
 
 }
