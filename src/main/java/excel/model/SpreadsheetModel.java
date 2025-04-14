@@ -1,6 +1,5 @@
 package excel.model;
 
-import excel.viewmodel.SpreadsheetCellViewModel;
 import javafx.beans.Observable;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyBooleanProperty;

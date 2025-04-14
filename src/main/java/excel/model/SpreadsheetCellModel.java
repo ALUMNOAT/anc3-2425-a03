@@ -51,7 +51,7 @@ public class SpreadsheetCellModel {
     // Applique la valeur au valueProperty
     public void setValue(String value){
         setResult(value);
-        System.out.println("value = " + value);
+        //System.out.println("value = " + value);
         this.valueProperty.set(value);
     }
 
@@ -93,7 +93,6 @@ public class SpreadsheetCellModel {
         int rowIndex = row + 1; // Convert zero-based index to one-based
         return String.valueOf(columnLetter) + rowIndex; // Combine to form "A1", "B2", etc.
     }
-
 
 
     /**

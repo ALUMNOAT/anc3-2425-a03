@@ -10,7 +10,7 @@ public class SetValueOperation implements Command {
         this.cell = cell;
         this.oldValue = cell.getValue();
         this.newValue = newValue;
-        System.out.println("SetValueOperation created: oldValue=" + oldValue + ", newValue=" + newValue);
+        //System.out.println("SetValueOperation created: oldValue=" + oldValue + ", newValue=" + newValue);
     }
 
     //utilisé dans le cas de l'ajout d'une nouvelle valeur ou d'un redo

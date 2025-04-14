@@ -31,7 +31,7 @@ public class CommandManager {
         canRedo.set(!redoStack.isEmpty());
     }
 
-    //videle stack du redo si l'on ajoute une nouvelle valeur
+    //vide le stack du redo si l'on ajoute une nouvelle valeur
     public void execute(Command command) {
         command.execute();
         undoStack.push(command);
@@ -41,7 +41,7 @@ public class CommandManager {
 
     public void undo() {
         if (!undoStack.isEmpty()) {
-            System.out.println("undo");
+            //System.out.println("undo");
             Command command = undoStack.pop();
             command.undo();
             redoStack.push(command);
@@ -51,7 +51,7 @@ public class CommandManager {
 
     public void redo() {
         if (!redoStack.isEmpty()) {
-            System.out.println("redo");
+            //System.out.println("redo");
             Command command = redoStack.pop();
             command.execute();
             undoStack.push(command);

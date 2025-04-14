@@ -31,7 +31,7 @@ public class ExpressionBuilder {
         Stack<Expression> values = new Stack<>();
         Stack<String> operators = new Stack<>();
 
-        System.out.println("Tokens: " + tokens);
+        //System.out.println("Tokens: " + tokens);
 
         for (int i = 0; i < tokens.size(); i++) {
             String token = tokens.get(i);

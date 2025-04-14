@@ -1,7 +1,5 @@
 package excel.model;
 
-import java.util.HashSet;
-
 public class ReferenceExpression extends Expression {
     private final String cellReference;
     private final SpreadsheetModel spreadsheet;
