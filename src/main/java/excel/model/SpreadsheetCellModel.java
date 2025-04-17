@@ -1,5 +1,6 @@
 package excel.model;
 
+import excel.viewmodel.SpreadsheetCellViewModel;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
@@ -8,6 +9,8 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
+import static excel.viewmodel.SpreadsheetCellViewModel.formatResult;
 
 public class SpreadsheetCellModel {
     private final SimpleObjectProperty<String> valueProperty = new SimpleObjectProperty<>();
@@ -116,11 +119,11 @@ public class SpreadsheetCellModel {
 
         if (!value.startsWith("=")) {
             value = value.replaceAll("(?<=\\d),(?=\\d)", "."); // ✅ Convertit 5,3 → 5.3
-            this.resultProperty.set(value);
+            this.resultProperty.set(formatResult(value));  // Applique le formatage avant de set resultProperty (pour empêcher problème undo/redo)
             return;
         }
 
-        // si se référence elle même
+        // Si se référence elle-même
         String currentRef = getCellReference();
         spreadsheet.updateDependencies(currentRef, value);
         if (spreadsheet.hasCircularReference(currentRef)) {
@@ -135,18 +138,9 @@ public class SpreadsheetCellModel {
 
         if (exp != null) {
             Object result = exp.interpret();
-            this.resultProperty.set(formatResult(result));
+            this.resultProperty.set(formatResult(result));  // Applique le formatage avant de set resultProperty (pour empêcher problème undo/redo)
         } else {
             this.resultProperty.set("SYNTAX_ERROR");
         }
-    }
-    private String formatResult(Object result) {
-        if (result instanceof Double) {
-            DecimalFormat df = new DecimalFormat("#.##");
-            return df.format(result).replace(',', '.'); // Ensure decimal point
-        } else if (result instanceof Boolean || result instanceof String) {
-            return result.toString();
-        }
-        return result != null ? result.toString() : "#Valeur"; // Handle null or unexpected results
     }
 }
