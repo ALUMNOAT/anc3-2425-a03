@@ -191,20 +191,7 @@ public class SpreadsheetModel {
         return convertToReference(row, col);
     }
 
-    public void undo(){
-        CommandManager.getInstance().undo();
-    }
 
-    public void redo(){
-        CommandManager.getInstance().redo();
-    }
-
-    public ReadOnlyBooleanProperty canRedo(){
-        return CommandManager.getInstance().canRedoProperty();
-    }
-    public ReadOnlyBooleanProperty canUndo(){
-        return CommandManager.getInstance().canUndoProperty();
-    }
 
 
 }
