@@ -133,7 +133,7 @@ package anc3.spreadsheet.model {
         +undo()
     }
 
-    class SetValueExpression {
+    class SetValueOperation {
         -cell: SpreadsheetCellModel
         -oldValue: Object
         -newValue: Object
@@ -141,13 +141,12 @@ package anc3.spreadsheet.model {
         +undo()
     }
 
-    Command <|.. SetValueExpression     : implements
+    Command <|.. SetValueOperation     : implements
 
-    CommandManager --> SetValueExpression       : use
-    SpreadsheetModel --> CommandManager : use
-    SpreadsheetModel --> SetValueExpression : create
+    CommandManager --> SetValueOperation       : use
 
-    SetValueExpression ..> SpreadsheetCellModel : modify
+
+    SetValueOperation ..> SpreadsheetCellModel : modify
 
 
     abstract class Expression {
@@ -217,7 +216,8 @@ HeaderView *--> SpreadsheetViewModel
 
 SpreadsheetViewModel *-->  SpreadsheetModel
 SpreadsheetCellViewModel *-->  SpreadsheetCellModel
-
+SpreadsheetViewModel --> CommandManager : use
+SpreadsheetViewModel --> SetValueOperation : create
 'App *--> Stage
 'App ..> Scene : <<create>>
 'Stage *--> Scene
