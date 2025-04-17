@@ -135,9 +135,18 @@ public class SpreadsheetCellModel {
 
         if (exp != null) {
             Object result = exp.interpret();
-            this.resultProperty.set(result.toString());
+            this.resultProperty.set(formatResult(result));
         } else {
             this.resultProperty.set("SYNTAX_ERROR");
         }
+    }
+    private String formatResult(Object result) {
+        if (result instanceof Double) {
+            DecimalFormat df = new DecimalFormat("#.##");
+            return df.format(result).replace(',', '.'); // Ensure decimal point
+        } else if (result instanceof Boolean || result instanceof String) {
+            return result.toString();
+        }
+        return result != null ? result.toString() : "#Valeur"; // Handle null or unexpected results
     }
 }
