@@ -1,5 +1,6 @@
 package excel.viewmodel;
 
+import excel.model.CommandManager;
 import excel.model.SpreadsheetCellModel;
 import excel.model.SpreadsheetModel;
 import javafx.beans.property.*;
@@ -101,19 +102,20 @@ public class SpreadsheetViewModel {
         return model.selectedCellProperty().get().getCol();
     }
 
-    public void undo (){
-        model.undo();
+    public void undo() {
+        CommandManager.getInstance().undo();
     }
 
-    public void redo(){
-        model.redo();
+    public void redo() {
+        CommandManager.getInstance().redo();
     }
 
-    public ReadOnlyBooleanProperty canRedo(){
-        return model.canRedo();
+    public ReadOnlyBooleanProperty canUndo() {
+        return CommandManager.getInstance().canUndoProperty();
     }
-    public ReadOnlyBooleanProperty canUndo(){
-        return model.canUndo();
+
+    public ReadOnlyBooleanProperty canRedo() {
+        return CommandManager.getInstance().canRedoProperty();
     }
 
 
