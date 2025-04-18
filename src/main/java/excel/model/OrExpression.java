@@ -13,6 +13,6 @@ public class OrExpression extends LogicBinaryOperator {
         if (leftValue instanceof Boolean && rightValue instanceof Boolean) {
             return (Boolean) leftValue || (Boolean) rightValue;
         }
-        return "#Valeur"; // Return error if values are not boolean
+        return "#VALEUR";
     }
 }

@@ -22,10 +22,11 @@ public class MultiplicationExpression extends ArithmeticOperator {
 
             return leftNum * rightNum;
         }
+        // Exemple : A1=2, A2=sdfdsfsdf, A3=A1*A2, A3 renvoie #VALEUR
         if (getLeft() instanceof ReferenceExpression || getRight() instanceof ReferenceExpression) {
             return "#VALEUR";
         }
-        return "SYNTAX_ERROR"; // Error case
+        return "SYNTAX_ERROR";
     }
 }
 

@@ -17,7 +17,7 @@ public class DifferentThanExpression extends BinaryExpression {
         } else if (leftValue instanceof String && rightValue instanceof String) {
             return !leftValue.equals(rightValue);
         }
-        return "#Valeur"; // Return error if values are not comparable
+        return "#VALEUR"; // Return error if values are not comparable
     }
 }
 

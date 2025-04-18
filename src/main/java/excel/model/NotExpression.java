@@ -11,7 +11,7 @@ public class NotExpression extends LogicUnaryOperator {
         if (leftValue instanceof Boolean) {
             return !(Boolean) leftValue;
         }
-        return "#Valeur"; // Return error if the value is not boolean
+        return "#VALEUR";
     }
 }
 
