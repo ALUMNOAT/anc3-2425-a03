@@ -36,7 +36,7 @@ public class SpreadsheetCellViewModel {
         } else if (result instanceof Boolean || result instanceof String) {
             return result.toString();
         }
-        return result != null ? result.toString() : "#Valeur"; // Handle null or unexpected results
+        return result != null ? result.toString() : "#VALEUR"; // Handle null or unexpected results
     }
 
     public void setCellValue(String value) {

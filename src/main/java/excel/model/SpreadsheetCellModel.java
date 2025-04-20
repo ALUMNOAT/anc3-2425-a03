@@ -99,9 +99,7 @@ public class SpreadsheetCellModel {
     /**
      * Met à jour le résultat de la cellule en évaluant son expression.
      * <p>
-     * - Si l'entrée est une expression mathématique valide (commençant par '='), elle est évaluée et formatée :
-     *     - Affiche un entier sans décimales si le résultat est un nombre entier.
-     *     - Sinon, garde deux chiffres après la virgule.
+     * - Si l'entrée est une expression mathématique valide (commençant par '='), elle est évaluée:
      * - Si l'entrée est invalide, la cellule affiche "Erreur".
      * - Si l'entrée est vide ou null, le résultat est réinitialisé à une chaîne vide.
      */

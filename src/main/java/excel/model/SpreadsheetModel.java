@@ -182,6 +182,7 @@ public class SpreadsheetModel {
 
     }
 
+    // code non utilisée mais utile peut-etre
     public String getSelectedCellReference() {
         SpreadsheetCellModel selected = selectedCell.get();
         if (selected == null) return null;
