@@ -114,7 +114,7 @@ public class SpreadsheetCellModel {
         }
 
         if (!value.startsWith("=")) {
-            value = value.replaceAll("(?<=\\d),(?=\\d)", "."); // ✅ Convertit 5,3 → 5.3
+            value = value.replaceAll("(?<=\\d),(?=\\d)", "."); // Convertit 5,3 → 5.3
             this.resultProperty.set(formatResult(value));  // Applique le formatage avant de set resultProperty (pour empêcher problème undo/redo)
             return;
         }
