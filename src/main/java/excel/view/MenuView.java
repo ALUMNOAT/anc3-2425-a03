@@ -58,7 +58,8 @@ public class MenuView extends HBox {
         Menu editMenu = new Menu("Edit");
         MenuItem undoItem = new MenuItem("Undo");
         MenuItem redoItem = new MenuItem("Redo");
-        editMenu.getItems().addAll(undoItem, redoItem);
+        MenuItem clearItem = new MenuItem("Clear All");
+        editMenu.getItems().addAll(undoItem, redoItem, clearItem);
 
         MenuBar menuBar = new MenuBar(fileMenu, editMenu);
         HBox.setHgrow(menuBar, Priority.ALWAYS);
@@ -71,6 +72,7 @@ public class MenuView extends HBox {
         redoItem.setOnAction(event -> viewModel.redo());
         redoItem.disableProperty().bind(viewModel.canRedo().not());
         undoItem.disableProperty().bind(viewModel.canUndo().not());
+        clearItem.setOnAction(event -> viewModel.clearAllCells());
     }
 
     private void open() {

@@ -4,6 +4,7 @@ import excel.viewmodel.SpreadsheetViewModel;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.geometry.Insets;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -12,6 +13,8 @@ import javafx.scene.layout.Priority;
 public class HeaderView  extends HBox {
     private final SpreadsheetViewModel viewModel;
     private final StringProperty selectedCellValue = new SimpleStringProperty(""); //valeur de la cellule selectionnée
+
+    private Label label = new Label();
 
     public HeaderView(SpreadsheetViewModel viewModel){
         this.viewModel = viewModel;
@@ -26,6 +29,22 @@ public class HeaderView  extends HBox {
 
     private void manageComponents() {
         TextField operationField = new TextField("");
+
+        this.getChildren().add(label);
+        HBox.setMargin(label, new Insets(5, 15, 5, 5));
+        HBox.setHgrow(label, Priority.ALWAYS);
+        // Lien du label avec la référence de la cellule sélectionnée
+        label.textProperty().bind(viewModel.selectedCellReferenceProperty());
+
+
+        // Change le texte en changeant de cellule
+        viewModel.selectedCellProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal != null) {
+                selectedCellValue.set(newVal.getValue());
+            } else {
+                selectedCellValue.set("");
+            }
+        });
 
         this.getChildren().add(operationField);
         HBox.setHgrow(operationField, Priority.ALWAYS);
