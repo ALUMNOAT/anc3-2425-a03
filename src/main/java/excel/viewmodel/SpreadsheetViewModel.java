@@ -13,8 +13,15 @@ import java.io.IOException;
 public class SpreadsheetViewModel {
     private final SpreadsheetModel model;
     private final SimpleBooleanProperty editableProperty = new SimpleBooleanProperty(true);
+    // Référence de la cellule sélectionnée (ex. "A1")
+    private final StringProperty selectedCellReference = new SimpleStringProperty();
+
     public SpreadsheetViewModel(SpreadsheetModel model) {
         this.model = model;
+        // listener pour mettre à jour la référence lorsque la cellule sélectionnée change
+        selectedCellProperty().addListener(
+                (obs,
+                 oldVal, newVal) -> updateSelectedCellReference());
     }
 
     public SpreadsheetCellViewModel getCellViewModel(int line, int column) {
@@ -118,5 +125,51 @@ public class SpreadsheetViewModel {
         return CommandManager.getInstance().canRedoProperty();
     }
 
+    // Convertit une position (ligne, colonne) en référence de cellule (ex. "A1")
+    String convertToReference(int row, int col) {
+        StringBuilder colName = new StringBuilder();
+        col++;
 
+        while (col > 0) {
+            col--;
+            colName.insert(0, (char) ('A' + col % 26));
+            col /= 26;
+        }
+
+        return colName.toString() + (row + 1);
+
+    }
+
+    // Propriété de la référence de la cellule sélectionnée
+    public StringProperty selectedCellReferenceProperty() {
+        return selectedCellReference;
+    }
+
+    // Met à jour la référence de la cellule sélectionnée
+    public void updateSelectedCellReference() {
+        String reference = getSelectedCellReference();
+        selectedCellReference.set(reference != null ? reference : "");
+    }
+
+    // Retourne la référence de la cellule sélectionnée
+    public String getSelectedCellReference() {
+        SpreadsheetCellModel selected = getSelectedCell();
+        if (selected == null) return null;
+
+        int row = getSelectedCellRow();
+        int col = getSelectedCellColumn();
+        // Convert the row and column to a cell reference (e.g., A1, B2, etc.)
+        return "Cellule : " + convertToReference(row, col);
+    }
+
+    // Efface toutes les cellules du tableur
+    public void clearAllCells() {
+        for (int row = 0; row < getRowCount(); row++) {
+            for (int col = 0; col < getColumnCount(); col++) {
+                if (!getCellValue(row, col).isEmpty()) {
+                    setCellValue(row, col, "");
+                }
+            }
+        }
+    }
 }
