@@ -1,7 +1,5 @@
 package excel.model;
 
-import java.util.HashSet;
-
 public class ReferenceExpression extends Expression {
     private final String cellReference;
     private final SpreadsheetModel spreadsheet;
@@ -17,8 +15,8 @@ public class ReferenceExpression extends Expression {
         if (spreadsheet.hasCircularReference(cellReference)) {
             return "#CIRCULAR REF";
         }
-
-        String value = String.valueOf(spreadsheet.getCellValue(cellReference)); // Fetch cell content
+        // Fetch cell content
+        String value = String.valueOf(spreadsheet.getCellValue(cellReference));
 
         // Check for boolean values
         if (value.equalsIgnoreCase("true")) return true;

@@ -47,7 +47,7 @@ public class HeaderView  extends HBox {
         operationField.setOnAction(event -> {
             if (viewModel.selectedCellProperty().get() != null) {
                 viewModel.selectedCellProperty().get().setResult(selectedCellValue.get());
-                viewModel.selectedCellProperty().get().setValue(selectedCellValue.get());
+                viewModel.selectedCellProperty().get().addValue(selectedCellValue.get());
             }
         });
     }

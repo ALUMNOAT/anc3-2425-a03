@@ -1,8 +1,8 @@
 package excel.model;
 
-import excel.viewmodel.SpreadsheetCellViewModel;
 import javafx.beans.Observable;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -12,8 +12,8 @@ import java.util.stream.IntStream;
 
 
 public class SpreadsheetModel {
-    private final int rows;
-    private final int cols;
+    private int rows;
+    private int cols;
     private final ObjectProperty<SpreadsheetCellModel> selectedCell = new SimpleObjectProperty<>();
     private final ObservableList<ObservableList<SpreadsheetCellModel>> data = FXCollections.observableArrayList(
             item -> new Observable[]{});
@@ -41,6 +41,15 @@ public class SpreadsheetModel {
     public int getColumnCount() {
         return this.cols;
     }
+
+    public int setRows(int rows) {
+        return this.rows = rows;
+    }
+
+    public int setCols(int cols) {
+        return this.cols = cols;
+    }
+
 
     public SpreadsheetCellModel getCell(int line, int column) {
         return data.get(line).get(column);
@@ -95,7 +104,7 @@ public class SpreadsheetModel {
 
 
 
-    private int[] parseCellReference(String reference) {
+    int[] parseCellReference(String reference) {
         if (!reference.matches("[A-Z]+[0-9]+")) return null; // Vérifie la syntaxe (ex: "A1")
 
         int column = 0;
@@ -159,8 +168,29 @@ public class SpreadsheetModel {
         return detectCycle(cellReference, new HashSet<>());
     }
 
+    String convertToReference(int row, int col) {
+        StringBuilder colName = new StringBuilder();
+        col++;
 
+        while (col > 0) {
+            col--;
+            colName.insert(0, (char) ('A' + col % 26));
+            col /= 26;
+        }
 
+        return colName.toString() + (row + 1);
+
+    }
+
+    // code non utilisée mais utile peut-etre
+    public String getSelectedCellReference() {
+        SpreadsheetCellModel selected = selectedCell.get();
+        if (selected == null) return null;
+
+        int row = selected.getRow();
+        int col = selected.getCol();
+        return convertToReference(row, col);
+    }
 
 
 

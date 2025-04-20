@@ -5,14 +5,8 @@ import excel.model.SpreadsheetModel;
 import excel.view.Mainview;
 import excel.viewmodel.SpreadsheetViewModel;
 import javafx.application.Application;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import org.controlsfx.control.spreadsheet.GridBase;
-import org.controlsfx.control.spreadsheet.SpreadsheetCell;
-import org.controlsfx.control.spreadsheet.SpreadsheetCellType;
-import org.controlsfx.control.spreadsheet.SpreadsheetView;
 
 public class App extends Application {
 
@@ -25,7 +19,7 @@ public class App extends Application {
 
         FXComponentInspectorHandler.handleAll();
 
-        Scene scene = new Scene(root, 652, 332);
+        Scene scene = new Scene(root, 655, 380);
         primaryStage.setTitle("Excel");
         primaryStage.setScene(scene);
         primaryStage.show();

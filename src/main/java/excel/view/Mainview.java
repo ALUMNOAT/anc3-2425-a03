@@ -1,12 +1,13 @@
 package excel.view;
 
 import excel.viewmodel.SpreadsheetViewModel;
-import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
 
-public class Mainview extends BorderPane {
+public class Mainview extends VBox {
 
     public Mainview(SpreadsheetViewModel viewModel) {
-        this.setTop(new HeaderView(viewModel));
-        this.setCenter(new MySpreadsheetView(viewModel));
+        this.getChildren().add(new MenuView(viewModel));
+        this.getChildren().add(new HeaderView(viewModel));
+        this.getChildren().add(new MySpreadsheetView(viewModel));
     }
 }

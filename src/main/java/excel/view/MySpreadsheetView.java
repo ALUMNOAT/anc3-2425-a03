@@ -25,12 +25,6 @@ public class MySpreadsheetView extends SpreadsheetView {
         this.setGrid(this.grid);
         configEditLogic();
         layoutSpreadSheet();
-
-
-
-
-
-
     }
 
 
@@ -41,7 +35,7 @@ public class MySpreadsheetView extends SpreadsheetView {
     }
 
     private void configEditLogic(){
-        // ECouteur de la cellule en edition
+        // Écouteur de la cellule en edition
         this.editingCellProperty().addListener((observableValue, oldVal, newVal) -> {
             if (newVal != null) {
                 var tablePosition = this.getSelectionModel().getSelectedCells().get(0);
@@ -51,12 +45,15 @@ public class MySpreadsheetView extends SpreadsheetView {
                 SpreadsheetCell spreadsheetCell = grid.getRows().get(row).get(col);
                 spreadsheetCell.itemProperty().set(viewModel.getCellValue(row, col));
             } else { // permet de refresh les différentes cases (repasser en result ou pour les références en cas de changement)
-                updateCellDisplay();
+                int row = viewModel.getSelectedCellRow();
+                int col = viewModel.getSelectedCellColumn();
+                SpreadsheetCell spreadsheetCell = grid.getRows().get(row).get(col);
+                spreadsheetCell.itemProperty().set(viewModel.getCellResult(row,col));
             }
         });
 
 
-        // Ecouteur de la cellule selectionnée
+        // Écouteur de la cellule selectionnée
         this.getSelectionModel().getSelectedCells().addListener((ListChangeListener<? super TablePosition>) change -> { // ajout d'un écouteur obsverant si il y a un changement de cellule selectionnée
             while (change.next()) {
                 if (!this.getSelectionModel().getSelectedCells().isEmpty()) {
@@ -67,17 +64,6 @@ public class MySpreadsheetView extends SpreadsheetView {
         });
     }
 
-    private void updateCellDisplay() {
-        for (int row = 0; row < grid.getRowCount(); row++) {
-            for (int col = 0; col < grid.getColumnCount(); col++) {
-                SpreadsheetCell cell = grid.getRows().get(row).get(col);
-                String cellValue = viewModel.getCellValue(row,col);
-                viewModel.setCellValue(row,col,cellValue);
-                viewModel.setCellResult(row,col,cellValue);
-                cell.itemProperty().set(viewModel.getCellResult(row, col));
-            }
-        }
-    }
 
     private GridBase createGridAndBindings() {
         GridBase grid = new GridBase(viewModel.getRowCount(), viewModel.getColumnCount());
@@ -91,34 +77,27 @@ public class MySpreadsheetView extends SpreadsheetView {
                 int finalRow = row;
                 int finalColumn = column;
 
-
+                // pour les refs (change que leur result et non leur value donc nécessaire)
+                viewModel.getCellResultProperty(finalRow, finalColumn).addListener((observable, oldVal, newVal) -> {
+                    if (!Objects.equals(oldVal, newVal)) {
+                        cell.itemProperty().set(newVal);
+                    }
+                });
                 // Synchronisation entre le modèle et la vue
                 cell.itemProperty().addListener((observableValue, oldVal, newVal) -> {
                     if (!Objects.equals(oldVal, newVal) && viewModel.getCellResult(finalRow,finalColumn)!= newVal && viewModel.getCellValue(finalRow,finalColumn) != newVal) { // si la valeur a changé et que le résultat est différent de la nouvelle valeur (pour éviter double passage)
-//                        System.out.println("avant Result !");
                         viewModel.setCellResult(finalRow,finalColumn, (String) newVal);
-//                        System.out.println("après Result -> value : " + viewModel.getCellValue(finalRow,finalColumn)+ ", result : " + viewModel.getCellResult(finalRow,finalColumn));
-//                        System.out.println("avant value !");
+
                         viewModel.setCellValue(finalRow, finalColumn, (String) newVal);
-//                        System.out.println("après Value -> value : " + viewModel.getCellValue(finalRow,finalColumn)+ ", result : " + viewModel.getCellResult(finalRow,finalColumn));
                         cell.itemProperty().set(viewModel.getCellResult(finalRow,finalColumn));
-                        updateCellDisplay();
 
                     }
-
-                    // A SUPPRIMER LE DEBUG PAR LA SUITE
-//                    System.out.println("DEBUG : change view " + newVal);
                 });
 
                 viewModel.getCellValueProperty(finalRow, finalColumn).addListener((observableValue, oldVal, newVal) -> {
-                        updateCellDisplay();
                     if (!Objects.equals(oldVal, newVal)) {
                         cell.itemProperty().set(viewModel.getCellResult(finalRow,finalColumn));
-                        updateCellDisplay();
                     }
-                    updateCellDisplay();
-                    // A SUPPRIMER LE DEBUG PAR LA SUITE
-//                    System.out.println("DEBUG : change model " + newVal);
                 });
 
                 list.add(cell);

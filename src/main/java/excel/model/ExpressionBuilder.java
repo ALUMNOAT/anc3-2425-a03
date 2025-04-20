@@ -4,9 +4,11 @@ import java.util.*;
 
 public class ExpressionBuilder {
     private final SpreadsheetModel spreadsheet;
+    private final SpreadsheetCellModel cell;
 
-    public ExpressionBuilder(SpreadsheetModel spreadsheet) {
+    public ExpressionBuilder(SpreadsheetModel spreadsheet, int col , int row) {
         this.spreadsheet = spreadsheet;
+        this.cell = spreadsheet.getCell(row,col);
     }
 
     public Expression build(String strExpr) {
@@ -29,44 +31,60 @@ public class ExpressionBuilder {
         Stack<Expression> values = new Stack<>();
         Stack<String> operators = new Stack<>();
 
-        for (String token : tokens) {
-            if (isNumber(token)) {
+        //System.out.println("Tokens: " + tokens);
+
+        for (int i = 0; i < tokens.size(); i++) {
+            String token = tokens.get(i);
+
+            if (token.equalsIgnoreCase("SUM")) {
+                // Vérifie qu'il y a au moins 6 tokens pour éviter l'IndexOutOfBoundsException
+                if (i + 5 >= tokens.size()) {
+                    values.push(new SumExpression("#SYNTAX_ERROR", spreadsheet,cell));
+                    return new SumExpression("#SYNTAX_ERROR", spreadsheet,cell);
+                }
+
+                if (tokens.get(i + 1).equals("(") && tokens.get(i + 3).equals(":") && tokens.get(i + 5).equals(")")) {
+                    String range = tokens.get(i + 2) + ":" + tokens.get(i + 4);
+                    //System.out.println("Detected SUM inside another expression: " + range);
+                    values.push(new SumExpression(range, spreadsheet,cell));
+                    i += 5; // Skip "SUM ( A1 : B1 )"
+                } else {
+                    values.push(new SumExpression("#SYNTAX_ERROR", spreadsheet,cell));
+                    return new SumExpression("#SYNTAX_ERROR", spreadsheet,cell);
+                }
+            } else if (isNumber(token)) {
                 values.push(new NumberExpression(Double.parseDouble(token)));
             } else if (isReference(token)) {
+                cell.addRef(token);
                 values.push(new ReferenceExpression(token, spreadsheet));
             } else if (isBoolean(token)) {
                 values.push(new BooleanExpression(Boolean.parseBoolean(token)));
-            } else if (token.equalsIgnoreCase("NOT")) { // Handle NOT
+            } else if (token.equalsIgnoreCase("NOT")) {
                 operators.push(token);
             } else if (isOp(token)) {
-                // Ensure lower precedence operators are applied later
+                // Apply previous operators with higher or equal precedence
                 while (!operators.isEmpty() && precedence(operators.peek()) >= precedence(token)) {
+                    if (values.size() < 2) {
+                        return null; // Indicates SYNTAX_ERROR
+                    }
                     applyOperator(values, operators);
                 }
                 operators.push(token);
             }
         }
 
-        // Check for trailing operator
-        if (!operators.isEmpty() && values.size() < 2) {
-            return null; // Return null for invalid expression
-        }
-
-        // Apply any remaining unary NOT operators
-        while (!operators.isEmpty() && operators.peek().equalsIgnoreCase("NOT")) {
-            if (values.isEmpty()) return null; // Prevent Empty Stack Error
-            Expression operand = values.pop();
-            values.push(new NotExpression(operand));
-            operators.pop();
-        }
-
-        // Apply remaining binary operators
+        // Check for any remaining operators at the end
         while (!operators.isEmpty()) {
+            if (values.size() < 2) {
+                return null; // Indicates SYNTAX_ERROR
+            }
             applyOperator(values, operators);
         }
 
-        return values.isEmpty() ? null : values.pop(); // Ensure not empty
+        return values.isEmpty() ? null : values.pop(); // Return final result or null for SYNTAX_ERROR
     }
+
+
 
     private void applyOperator(Stack<Expression> values, Stack<String> operators) {
         String operator = operators.pop();
@@ -83,6 +101,7 @@ public class ExpressionBuilder {
     }
 
 
+
     // Add this method
     private boolean isBoolean(String s) {
         return s.equalsIgnoreCase("true") || s.equalsIgnoreCase("false");
@@ -94,21 +113,21 @@ public class ExpressionBuilder {
 
 
     private List<String> tokenize(String strExpr) {
-        strExpr = strExpr.replace(',', '.'); // ✅ Corrige les décimaux avec des virgules
+        strExpr = strExpr.replace(',', '.'); // Corrige les décimaux avec des virgules
 
         List<String> tokens = new ArrayList<>();
         StringBuilder currentToken = new StringBuilder();
-        boolean lastWasNumber = false; // ✅ Gère correctement les nombres décimaux
+        boolean lastWasNumber = false; // Gère correctement les nombres décimaux
 
         for (int i = 0; i < strExpr.length(); i++) {
             char c = strExpr.charAt(i);
 
-            // ✅ Gère les nombres et variables
+            // Gère les nombres et variables
             if (Character.isLetterOrDigit(c) || (c == '.' && lastWasNumber)) {
                 currentToken.append(c);
                 lastWasNumber = true;
             } else {
-                // ✅ Ajoute le dernier token détecté
+                // Ajoute le dernier token détecté
                 if (currentToken.length() > 0) {
                     tokens.add(currentToken.toString());
                     currentToken.setLength(0);
@@ -116,7 +135,7 @@ public class ExpressionBuilder {
                 lastWasNumber = false;
 
                 if (!Character.isWhitespace(c)) {
-                    // ✅ Gère les opérateurs multi-caractères (<=, >=, !=, OR...)
+                    // Gère les opérateurs multi-caractères (<=, >=, !=, OR...)
                     if (i + 1 < strExpr.length()) {
                         String twoCharOp = strExpr.substring(i, i + 2);
                         if (twoCharOp.equals("<=") || twoCharOp.equals(">=") || twoCharOp.equals("!=") || twoCharOp.equalsIgnoreCase("OR")) {
@@ -125,7 +144,7 @@ public class ExpressionBuilder {
                             continue;
                         }
                     }
-                    if (i + 2 < strExpr.length()) { // ✅ Gère "AND" et "NOT"
+                    if (i + 2 < strExpr.length()) { // Gère "AND" et "NOT"
                         String threeCharOp = strExpr.substring(i, i + 3);
                         if (threeCharOp.equalsIgnoreCase("AND") || threeCharOp.equalsIgnoreCase("NOT")) {
                             tokens.add(threeCharOp);
@@ -133,13 +152,13 @@ public class ExpressionBuilder {
                             continue;
                         }
                     }
-                    // ✅ Ajoute les opérateurs simples
+                    // Ajoute les opérateurs simples
                     tokens.add(String.valueOf(c));
                 }
             }
         }
 
-        // ✅ Ajoute le dernier token restant
+        // Ajoute le dernier token restant
         if (currentToken.length() > 0) {
             tokens.add(currentToken.toString());
         }

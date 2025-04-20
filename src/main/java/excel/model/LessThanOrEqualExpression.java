@@ -14,6 +14,7 @@ public class LessThanOrEqualExpression extends ComparisonOperator {
         if (leftValue instanceof Double && rightValue instanceof Double) {
             return (double) leftValue <= (double) rightValue;
         }
+        // Exemple : A1=2, A2=sdfdsfsdf, A3=A1<=A2, A3 renvoie #VALEUR
         return "#VALEUR";
     }
 }

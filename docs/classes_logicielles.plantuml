@@ -107,9 +107,46 @@ package anc3.spreadsheet.model {
     ComparisonOperator *-- LowerThanExpression
     ComparisonOperator *-- GreaterThanExpression
 
+    class SumExpression {
+
+    }
+
+    SumExpression --|> Expression
 
 
 
+    interface Command {
+        +execute()
+        +undo()
+    }
+
+    class CommandManager {
+        -undoStack: Stack<Command>
+        -redoStack: Stack<Command>
+        +executeCommand(cmd: Command)
+        +undo()
+        +redo()
+    }
+
+    abstract class AbstractCommand {
+        +execute()
+        +undo()
+    }
+
+    class SetValueOperation {
+        -cell: SpreadsheetCellModel
+        -oldValue: Object
+        -newValue: Object
+        +execute()
+        +undo()
+    }
+
+    Command <|.. SetValueOperation     : implements
+
+    CommandManager --> SetValueOperation       : use
+
+
+    SetValueOperation ..> SpreadsheetCellModel : modify
 
 
     abstract class Expression {
@@ -179,7 +216,8 @@ HeaderView *--> SpreadsheetViewModel
 
 SpreadsheetViewModel *-->  SpreadsheetModel
 SpreadsheetCellViewModel *-->  SpreadsheetCellModel
-
+SpreadsheetViewModel --> CommandManager : use
+SpreadsheetViewModel --> SetValueOperation : create
 'App *--> Stage
 'App ..> Scene : <<create>>
 'Stage *--> Scene
