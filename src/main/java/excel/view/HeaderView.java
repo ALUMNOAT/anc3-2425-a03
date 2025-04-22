@@ -8,6 +8,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import org.controlsfx.control.ToggleSwitch;
 
 
 public class HeaderView  extends HBox {
@@ -61,7 +62,6 @@ public class HeaderView  extends HBox {
             }
         });
 
-
         // mis à jour de la cellule si changement de cellule selectionnée
         operationField.setOnAction(event -> {
             if (viewModel.selectedCellProperty().get() != null) {
@@ -69,5 +69,23 @@ public class HeaderView  extends HBox {
                 viewModel.selectedCellProperty().get().addValue(selectedCellValue.get());
             }
         });
+
+        // Ajout du ToggleButton pour le mode readonly
+        ToggleSwitch toggleEditable = new ToggleSwitch("Readonly");
+        toggleEditable.setSelected(viewModel.editableProperty().getValue());
+
+        toggleEditable.selectedProperty().addListener((observableValue, oldVal, newVal) -> {
+            viewModel.toggleEditable();
+            viewModel.addAction("Editable " + (newVal ? "enabled" : "disabled"));
+        });
+
+        // Désactiver le champ de texte si le mode readonly est activé
+        viewModel.editableProperty().addListener((obs, oldVal, newVal) -> {
+            operationField.setDisable(!newVal);
+        });
+
+        // Ajout du ToggleButton à la HBox
+        this.getChildren().add(toggleEditable);
+        HBox.setMargin(toggleEditable, new Insets(5, 5, 5, 15));
     }
 }

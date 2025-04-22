@@ -4,6 +4,8 @@ import excel.model.CommandManager;
 import excel.model.SpreadsheetCellModel;
 import excel.model.SpreadsheetModel;
 import javafx.beans.property.*;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -13,6 +15,8 @@ import java.io.IOException;
 public class SpreadsheetViewModel {
     private final SpreadsheetModel model;
     private final SimpleBooleanProperty editableProperty = new SimpleBooleanProperty(true);
+    // Liste observable des actions
+    private final ObservableList<String> actions = FXCollections.observableArrayList();
     // Référence de la cellule sélectionnée (ex. "A1")
     private final StringProperty selectedCellReference = new SimpleStringProperty();
 
@@ -171,5 +175,20 @@ public class SpreadsheetViewModel {
                 }
             }
         }
+    }
+
+    // Ajoute une action à la liste des actions
+    public ReadOnlyBooleanProperty editableProperty() {
+        return this.editableProperty;
+    }
+
+    // Renvoie la propriété editable
+    public void toggleEditable() {
+        this.editableProperty.set(this.editableProperty.not().get());
+    }
+
+    // Renvoie la propriété editable
+    public boolean addAction(String action) {
+        return actions.add(action);
     }
 }
