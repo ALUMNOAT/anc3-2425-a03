@@ -78,6 +78,9 @@ public class MySpreadsheetView extends SpreadsheetView {
                 int finalColumn = column;
 
                 // pour les refs (change que leur result et non leur value donc nécessaire)
+                this.editableProperty().bind(viewModel.editableProperty());
+
+                // pour les refs (change que leur result et non leur value donc nécessaire)
                 viewModel.getCellResultProperty(finalRow, finalColumn).addListener((observable, oldVal, newVal) -> {
                     if (!Objects.equals(oldVal, newVal)) {
                         cell.itemProperty().set(newVal);
