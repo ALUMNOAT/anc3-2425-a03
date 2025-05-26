@@ -232,7 +232,7 @@ public class ExpressionBuilder {
     }
 
     private boolean isOp(String s) {
-        return s.equals("+") || s.equals("-") || s.equals("*") || s.equals("/") || s.equals(">") || s.equals("<") || s.equals("<=") || s.equals(">=") || s.equals("=") || s.equals("!=") || s.equalsIgnoreCase("AND") || s.equalsIgnoreCase("OR") || s.equalsIgnoreCase("NOT");
+        return s.equals("+") || s.equals("-") || s.equals("*") || s.equals("/") || s.equals("^") || s.equals(">") || s.equals("<") || s.equals("<=") || s.equals(">=") || s.equals("=") || s.equals("!=") || s.equalsIgnoreCase("AND") || s.equalsIgnoreCase("OR") || s.equalsIgnoreCase("NOT");
     }
 
     private int precedence(String op) {
@@ -243,6 +243,7 @@ public class ExpressionBuilder {
             case ">", "<", "<=", ">=", "=", "!=" -> 4;
             case "+", "-" -> 5;
             case "*", "/" -> 6;
+            case "^" -> 7;
             default -> -1;
         };
     }
@@ -253,6 +254,7 @@ public class ExpressionBuilder {
             case "-" -> new SubstractionExpression(left, right);
             case "*" -> new MultiplicationExpression(left, right);
             case "/" -> new DivisionExpression(left, right);
+            case "^" -> new PowerExpression(left, right);
             case ">" -> new GreaterThanExpression(left, right);
             case "<" -> new LowerThanExpression(left, right);
             case "<=" -> new LessThanOrEqualExpression(left, right);

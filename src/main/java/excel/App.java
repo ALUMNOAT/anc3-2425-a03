@@ -13,13 +13,13 @@ public class App extends Application {
     @Override
     public void start(Stage primaryStage) {
 
-        SpreadsheetModel model = new SpreadsheetModel(10,4);
+        SpreadsheetModel model = new SpreadsheetModel(24,10);
         SpreadsheetViewModel viewModel = new SpreadsheetViewModel(model);
         Mainview root = new Mainview(viewModel);
 
         FXComponentInspectorHandler.handleAll();
 
-        Scene scene = new Scene(root, 655, 380);
+        Scene scene = new Scene(root, 1000, 550);
         primaryStage.setTitle("Excel");
         primaryStage.setScene(scene);
         primaryStage.show();
